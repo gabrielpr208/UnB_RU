@@ -16,11 +16,11 @@ Funcionalidade: Histórico de acessos
     E que existe o restaurante "RU FCE" sem acessos registrados
     E que foram registrados os seguintes acessos:
       | estudante   | restaurante      | catraca | data_hora        |
-      | 231012345   | RU Darcy Ribeiro | CAT-01  | 16/10/2026 12:30 |
-      | 221054321   | RU Darcy Ribeiro | CAT-01  | 16/10/2026 12:10 |
-      | 201098765   | RU Darcy Ribeiro | CAT-02  | 15/10/2026 18:45 |
-      | 231012345   | RU Gama          | CAT-01  | 15/10/2026 12:05 |
-      | 191011111   | RU Gama          | CAT-01  | 14/10/2026 11:50 |
+      | 231012345   | RU Darcy Ribeiro | 01      | 16/10/2026 12:30 |
+      | 221054321   | RU Darcy Ribeiro | 01      | 16/10/2026 12:10 |
+      | 201098765   | RU Darcy Ribeiro | 02      | 15/10/2026 18:45 |
+      | 231012345   | RU Gama          | 01      | 15/10/2026 12:05 |
+      | 191011111   | RU Gama          | 01      | 14/10/2026 11:50 |
 
   # ---------- Visualizar ----------
 
@@ -50,14 +50,14 @@ Funcionalidade: Histórico de acessos
 
     Exemplos:
       | restaurante      | catraca | quantidade |
-      | RU Darcy Ribeiro | CAT-01  | 2          |
-      | RU Darcy Ribeiro | CAT-02  | 1          |
-      | RU Gama          | CAT-01  | 2          |
+      | RU Darcy Ribeiro | 01      | 2          |
+      | RU Darcy Ribeiro | 02      | 1          |
+      | RU Gama          | 01      | 2          |
 
   Cenário: Opções de catraca dependem do restaurante selecionado (feliz)
     Quando eu acesso o histórico de acessos
     E eu seleciono o restaurante "RU Gama" no filtro
-    Então as opções de catraca devem ser apenas "CAT-01"
+    Então as opções de catraca devem ser apenas "01"
 
   Cenário: Filtrar por catraca sem selecionar restaurante (triste)
     Quando eu acesso o histórico de acessos
@@ -81,15 +81,15 @@ Funcionalidade: Histórico de acessos
   Cenário: Agrupar por catraca (feliz)
     Quando eu agrupo o histórico por catraca
     Então eu devo ver os seguintes totais:
-      | grupo                     | total |
-      | RU Darcy Ribeiro - CAT-01 | 2     |
-      | RU Darcy Ribeiro - CAT-02 | 1     |
-      | RU Gama - CAT-01          | 2     |
+      | grupo                 | total |
+      | RU Darcy Ribeiro - 01 | 2     |
+      | RU Darcy Ribeiro - 02 | 1     |
+      | RU Gama - 01          | 2     |
 
   Cenário: Filtrar por restaurante e agrupar por catraca (feliz)
     Quando eu filtro o histórico pelo restaurante "RU Darcy Ribeiro"
     E eu agrupo o histórico por catraca
     Então eu devo ver os seguintes totais:
       | grupo                     | total |
-      | RU Darcy Ribeiro - CAT-01 | 2     |
-      | RU Darcy Ribeiro - CAT-02 | 1     |
+      | RU Darcy Ribeiro - 01 | 2     |
+      | RU Darcy Ribeiro - 02 | 1     |
