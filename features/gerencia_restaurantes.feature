@@ -71,7 +71,7 @@ Funcionalidade: Gerenciar restaurantes
     E o restaurante "RU Gama" não deve aparecer na lista de restaurantes
 
   Cenário: Remover restaurante com catracas cadastradas (triste)
-    Dado que o restaurante "RU Darcy Ribeiro" possui a catraca "CAT-01"
+    Dado que o restaurante "RU Darcy Ribeiro" possui a catraca "01"
     Quando eu removo o restaurante "RU Darcy Ribeiro"
     Então eu devo ver a mensagem "Não é possível remover um restaurante com catracas cadastradas"
     E o restaurante "RU Darcy Ribeiro" deve aparecer na lista de restaurantes
