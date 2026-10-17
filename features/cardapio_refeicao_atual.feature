@@ -10,6 +10,7 @@ Funcionalidade: Visualizar cardápio da refeição atual
   - O cardápio exibido é o da refeição atual, no dia atual
   - Fora do horário de refeição, o sistema informa a próxima refeição
   - Opções não cadastradas aparecem como indisponíveis
+  - Se não houver cardápio cadastrado para a refeição, o sistema informa que ele ainda não foi divulgado
 
   Contexto:
     Dado que eu estou logado como estudante
@@ -40,7 +41,7 @@ Funcionalidade: Visualizar cardápio da refeição atual
     Quando eu acesso o cardápio
     Então eu devo ver as seguintes opções:
       | opcao                | prato               |
-      | Padrão               | Frango assado       |
+      | Padrão               | Frango grelhado     |
       | Ovolactovegetariano  | Omelete de legumes  |
       | Vegetariano estrito  | Estrogonofe de grão |
 
@@ -66,7 +67,7 @@ Funcionalidade: Visualizar cardápio da refeição atual
   Cenário: Refeição com opção não cadastrada (triste)
     Dado que agora são 18:00 de 16/10/2026
     Quando eu acesso o cardápio
-    Então eu devo ver a opção "Padrão" com o prato "Carne de sol"
+    Então eu devo ver a opção "Padrão" com o prato "Carne de panela"
     E eu devo ver a opção "Ovolactovegetariano" com o prato "Torta de queijo"
     E eu devo ver a opção "Vegetariano estrito" como "Indisponível nesta refeição"
 
