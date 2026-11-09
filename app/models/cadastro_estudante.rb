@@ -20,7 +20,7 @@ class CadastroEstudante
       estudante.save!
     end
     true
-  rescue ActiveRecord::RecordNotUnique
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
     @usuario = @estudante = nil
     valid?
     false
