@@ -1,0 +1,102 @@
+<% content_for :title, "Criar conta" %>
+<% content_for :abas, render("shared/abas_acesso") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+    <span class="selo">Cadastro por matrícula</span>
+  </div>
+  <h1 class="titulo-pagina">Criar conta de acesso</h1>
+  <p class="subtitulo-pagina">
+    Cadastre-se com sua matrícula da UnB para recarregar créditos e entrar nos restaurantes universitários.
+  </p>
+</div>
+
+<div class="grade-cadastro">
+  <section class="cartao" aria-labelledby="titulo-formulario">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-formulario">Dados do estudante</h2>
+      <span class="selo">Todos os campos são obrigatórios</span>
+    </header>
+
+    <% if @cadastro.errors.any? %>
+      <div class="alerta alerta--erro" role="alert">
+        <%= icone :alerta, classe: "alerta__icone" %>
+        <div>
+          <p class="alerta__titulo">Não foi possível concluir o cadastro</p>
+          <p class="alerta__texto">Corrija os campos destacados e tente novamente.</p>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with model: @cadastro, url: cadastro_path, class: "formulario", html: { novalidate: true } do |f| %>
+      <fieldset class="formulario__grupo">
+        <legend class="rotulo-secao">Identificação</legend>
+
+        <%= render "campo", form: f, atributo: :nome, rotulo: "Nome completo", simbolo: :usuario,
+                            opcoes: { autocomplete: "name", placeholder: "Ex.: Maria Souza" } %>
+
+        <div class="formulario__linha">
+          <%= render "campo", form: f, atributo: :matricula, rotulo: "Matrícula", simbolo: :matricula,
+                              dica: "9 dígitos, sem barra. Ex.: 231012345",
+                              opcoes: { inputmode: "numeric", autocomplete: "username", placeholder: "231012345" } %>
+
+          <%= render "campo", form: f, atributo: :email, rotulo: "E-mail", simbolo: :email, tipo: :email_field,
+                              opcoes: { autocomplete: "email", placeholder: "voce@aluno.unb.br" } %>
+        </div>
+      </fieldset>
+
+      <fieldset class="formulario__grupo">
+        <legend class="rotulo-secao">Senha de acesso</legend>
+
+        <div class="formulario__linha">
+          <%= render "campo", form: f, atributo: :senha, rotulo: "Senha", simbolo: :cadeado, tipo: :password_field,
+                              dica: "Mínimo de #{Usuario::TAMANHO_MINIMO_SENHA} caracteres",
+                              opcoes: { autocomplete: "new-password" } %>
+
+          <%= render "campo", form: f, atributo: :confirmacao_senha, rotulo: "Confirmação de senha", simbolo: :cadeado,
+                              tipo: :password_field, dica: "Repita a senha escolhida",
+                              opcoes: { autocomplete: "new-password" } %>
+        </div>
+      </fieldset>
+
+      <div class="formulario__acoes">
+        <p class="formulario__alternativa">Já tem cadastro? <%= link_to "Entrar", login_path %></p>
+        <%= f.button type: "submit", class: "botao botao--primario" do %>
+          Criar conta <%= icone :seta %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <aside class="coluna-lateral">
+    <section class="cartao" aria-labelledby="titulo-regras">
+      <h2 class="cartao__titulo" id="titulo-regras">Regras do cadastro</h2>
+      <ul class="lista-regras">
+        <li><%= icone :confirmar %> Matrícula com exatamente 9 dígitos numéricos</li>
+        <li><%= icone :confirmar %> Cada matrícula pode ser cadastrada uma única vez</li>
+        <li><%= icone :confirmar %> Nome, e-mail e senha são obrigatórios</li>
+        <li><%= icone :confirmar %> Senha com no mínimo <%= Usuario::TAMANHO_MINIMO_SENHA %> caracteres, igual à confirmação</li>
+      </ul>
+    </section>
+
+    <section class="cartao" aria-labelledby="titulo-proximos-passos">
+      <h2 class="cartao__titulo" id="titulo-proximos-passos">Depois do cadastro</h2>
+      <p class="cartao__descricao">Três passos até a sua primeira refeição.</p>
+      <ol class="lista-passos">
+        <li>
+          <span class="lista-passos__icone"><%= icone :entrar %></span>
+          <span><strong>Entre na sua conta</strong> com matrícula e senha</span>
+        </li>
+        <li>
+          <span class="lista-passos__icone"><%= icone :cartao %></span>
+          <span><strong>Adicione créditos</strong> via PIX ou cartão de crédito</span>
+        </li>
+        <li>
+          <span class="lista-passos__icone"><%= icone :qrcode %></span>
+          <span><strong>Apresente o QR Code</strong> na catraca do restaurante</span>
+        </li>
+      </ol>
+    </section>
+  </aside>
+</div>

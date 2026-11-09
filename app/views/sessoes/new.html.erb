@@ -1,0 +1,21 @@
+<% content_for :title, "Entrar" %>
+<% content_for :abas, render("shared/abas_acesso") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+  </div>
+  <h1 class="titulo-pagina">Entrar</h1>
+  <p class="subtitulo-pagina">Acesse sua conta para consultar o saldo, recarregar créditos e ver o extrato.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-login">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-login">Login do estudante</h2>
+    <span class="selo">Em breve</span>
+  </header>
+  <p class="cartao__descricao">
+    O login de estudantes ainda não está disponível nesta versão do sistema.
+  </p>
+  <p class="formulario__alternativa">Ainda não tem conta? <%= link_to "Criar conta", cadastro_path %></p>
+</section>

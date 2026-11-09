@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "Unb Ru" %></title>
+    <title><%= content_for?(:title) ? "#{yield(:title)} · RU UnB" : "RU UnB" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Unb Ru">
+    <meta name="application-name" content="RU UnB">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,12 +18,35 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <header class="cabecalho">
+      <div class="cabecalho__barra">
+        <div class="cabecalho__conteudo">
+          <div class="marca">
+            <span class="marca__nome"><span class="marca__ru">RU</span> <span class="marca__unb">UnB</span></span>
+            <span class="marca__campus">Darcy Ribeiro</span>
+          </div>
+          <div class="cabecalho__secao">
+            <strong class="cabecalho__secao-titulo"><%= content_for?(:secao) ? yield(:secao) : "Portal do Estudante" %></strong>
+            <span class="cabecalho__secao-descricao">Restaurante Universitário · Acesso e créditos</span>
+          </div>
+        </div>
+      </div>
+      <%= yield :abas %>
+    </header>
+
+    <main class="pagina">
+      <%= render "layouts/flash" %>
+      <%= yield %>
+    </main>
   </body>
 </html>
