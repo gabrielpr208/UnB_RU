@@ -13,7 +13,10 @@ module ApplicationHelper
     qrcode: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>' \
             '<rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3"/><path d="M21 14v.01"/>' \
             '<path d="M14 21h.01"/><path d="M17 21h4v-4"/>',
-    escudo: '<path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>'
+    escudo: '<path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    sair: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+    carteira: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/>' \
+              '<path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>'
   }.freeze
 
   def icone(nome, classe: nil)
@@ -24,6 +27,15 @@ module ApplicationHelper
       "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round",
       aria: { hidden: true }, focusable: false
     )
+  end
+
+  def reais(valor)
+    number_to_currency(valor, unit: "R$", separator: ",", delimiter: ".", format: "%u %n")
+  end
+
+  def iniciais(nome)
+    partes = nome.split
+    [ partes.first, (partes.last if partes.size > 1) ].compact.map { |parte| parte[0] }.join.upcase
   end
 
   def link_de_aba(texto, caminho)

@@ -39,6 +39,9 @@
             <strong class="cabecalho__secao-titulo"><%= content_for?(:secao) ? yield(:secao) : "Portal do Estudante" %></strong>
             <span class="cabecalho__secao-descricao">Restaurante Universitário · Acesso e créditos</span>
           </div>
+          <% if logado? %>
+            <%= render "layouts/usuario", usuario: Current.usuario %>
+          <% end %>
         </div>
       </div>
       <%= yield :abas %>

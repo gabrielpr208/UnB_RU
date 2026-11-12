@@ -107,4 +107,11 @@ RSpec.describe Usuario, type: :model do
       expect(usuario.authenticate_senha("errada")).to be(false)
     end
   end
+
+  it "tem as sessões de login removidas junto com ele" do
+    usuario.save!
+    usuario.sessoes.create!(endereco_ip: "127.0.0.1", user_agent: "RSpec")
+
+    expect { usuario.destroy }.to change(Sessao, :count).by(-1)
+  end
 end

@@ -1,0 +1,39 @@
+<% content_for :title, "Início" %>
+<% content_for :abas, render("shared/abas_estudante") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+  </div>
+  <h1 class="titulo-pagina">Olá, <%= @estudante.primeiro_nome %></h1>
+  <p class="subtitulo-pagina">Acompanhe seu saldo e mantenha créditos para entrar nos restaurantes universitários.</p>
+</div>
+
+<div class="grade-painel">
+  <section class="cartao indicador" aria-labelledby="titulo-saldo">
+    <header class="indicador__cabecalho">
+      <h2 class="indicador__rotulo" id="titulo-saldo">Saldo disponível</h2>
+      <span class="indicador__icone"><%= icone :carteira %></span>
+    </header>
+    <p class="indicador__valor"><%= reais(@estudante.saldo) %></p>
+    <p class="indicador__rodape">Usado para pagar as refeições na catraca</p>
+  </section>
+
+  <section class="cartao" aria-labelledby="titulo-conta">
+    <h2 class="cartao__titulo" id="titulo-conta">Dados da conta</h2>
+    <dl class="lista-dados">
+      <div>
+        <dt>Nome</dt>
+        <dd><%= @estudante.nome %></dd>
+      </div>
+      <div>
+        <dt>Matrícula</dt>
+        <dd><%= @estudante.matricula %></dd>
+      </div>
+      <div>
+        <dt>E-mail</dt>
+        <dd><%= @estudante.email %></dd>
+      </div>
+    </dl>
+  </section>
+</div>

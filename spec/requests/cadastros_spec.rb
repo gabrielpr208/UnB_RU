@@ -35,6 +35,15 @@ RSpec.describe "Cadastro de estudante", type: :request do
     end
   end
 
+  describe "GET /cadastro com um estudante logado" do
+    it "manda para a página inicial" do
+      entrar_como(criar_estudante)
+      get cadastro_path
+
+      expect(response).to redirect_to(root_path)
+    end
+  end
+
   describe "POST /cadastro com dados válidos" do
     it "cria o estudante" do
       expect { cadastrar }.to change(Estudante, :count).by(1)

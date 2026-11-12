@@ -1,5 +1,5 @@
 <%# locals: (form:, atributo:, rotulo:, simbolo:, tipo: :text_field, dica: nil, opcoes: {}) -%>
-<% erros = form.object.errors[atributo] %>
+<% erros = form.object ? form.object.errors[atributo] : [] %>
 <% id_mensagem = "#{form.object_name}_#{atributo}_mensagem" %>
 <div class="campo<%= " campo--invalido" if erros.any? %>">
   <%= form.label atributo, rotulo, class: "campo__rotulo" %>

@@ -40,4 +40,21 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(link["aria-current"]).to be_nil
     end
   end
+
+  describe "#reais" do
+    it "formata valores no padrão brasileiro" do
+      expect(helper.reais(BigDecimal("1234.5"))).to eq("R$ 1.234,50")
+      expect(helper.reais(0)).to eq("R$ 0,00")
+    end
+  end
+
+  describe "#iniciais" do
+    it "usa a primeira letra do primeiro e do último nome" do
+      expect(helper.iniciais("Maria da Silva Souza")).to eq("MS")
+    end
+
+    it "usa uma letra só quando há um nome só" do
+      expect(helper.iniciais("maria")).to eq("M")
+    end
+  end
 end
