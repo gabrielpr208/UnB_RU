@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_115644) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_12_120000) do
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
     t.string "matricula", limit: 9, null: false
     t.decimal "saldo", precision: 10, scale: 2, default: "0.0", null: false
@@ -18,6 +18,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_115644) do
     t.datetime "updated_at", null: false
     t.index ["matricula"], name: "index_estudantes_on_matricula", unique: true
     t.check_constraint "saldo >= 0", name: "saldo_nao_negativo"
+  end
+
+  create_table "sessoes", force: :cascade do |t|
+    t.integer "usuario_id", null: false
+    t.string "endereco_ip"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["usuario_id"], name: "index_sessoes_on_usuario_id"
   end
 
   create_table "usuarios", force: :cascade do |t|
@@ -30,4 +39,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_115644) do
   end
 
   add_foreign_key "estudantes", "usuarios"
+  add_foreign_key "sessoes", "usuarios"
 end

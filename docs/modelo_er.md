@@ -4,6 +4,7 @@
 erDiagram
     USUARIO ||--o| ESTUDANTE : "especializa em"
     USUARIO ||--o| FUNCIONARIO : "especializa em"
+    USUARIO ||--o{ SESSAO : "mantém"
 
     ESTUDANTE ||--o{ RECARGA : realiza
     ESTUDANTE ||--o{ ACESSO : realiza
@@ -20,6 +21,14 @@ erDiagram
         string nome "obrigatório"
         string email "obrigatório, único"
         string senha_digest "obrigatório, mín. 6 caracteres antes do hash"
+    }
+
+    SESSAO {
+        int id PK
+        int usuario_id FK
+        string endereco_ip
+        string user_agent
+        datetime created_at "id guardado em cookie assinado; apagada no logout"
     }
 
     ESTUDANTE {

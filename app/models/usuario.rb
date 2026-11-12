@@ -5,6 +5,7 @@ class Usuario < ApplicationRecord
   has_secure_password :senha, validations: false, reset_token: false
 
   has_one :estudante, dependent: :destroy
+  has_many :sessoes, dependent: :destroy
 
   normalizes :nome, with: ->(nome) { nome.squish }
   normalizes :email, with: ->(email) { email.strip.downcase }
