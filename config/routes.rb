@@ -17,6 +17,13 @@ Rails.application.routes.draw do
   # Página inicial do estudante logado
   root "inicio#show"
 
+  # Recarga de saldo fictícia via PIX ou cartão (features/recarga_saldo.feature)
+  get  "recarga",                  to: "recargas#new",          as: :nova_recarga
+  post "recarga/pix",              to: "recargas#gerar_pix",    as: :gerar_pix
+  get  "recarga/pix/:id",          to: "recargas#pix",          as: :recarga_pix
+  post "recarga/pix/:id/conferir", to: "recargas#conferir_pix", as: :conferir_pix
+  post "recarga/cartao",           to: "recargas#pagar_cartao", as: :pagar_cartao
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
