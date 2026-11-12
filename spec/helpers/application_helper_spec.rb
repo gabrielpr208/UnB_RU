@@ -33,6 +33,20 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(aba("/cadastro", metodo: "POST")["class"]).to include("abas__item--ativa")
     end
 
+    it "marca a aba também nas páginas abaixo dela" do
+      helper.request.path = "/cadastro/algo"
+      link = Nokogiri::HTML5.fragment(helper.link_de_aba("Criar conta", "/cadastro")).at("a")
+
+      expect(link["class"]).to include("abas__item--ativa")
+    end
+
+    it "não confunde caminhos que só começam igual" do
+      helper.request.path = "/cadastros"
+      link = Nokogiri::HTML5.fragment(helper.link_de_aba("Criar conta", "/cadastro")).at("a")
+
+      expect(link["class"]).to eq("abas__item")
+    end
+
     it "não marca as outras abas" do
       link = aba("/login")
 
@@ -55,6 +69,23 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     it "usa uma letra só quando há um nome só" do
       expect(helper.iniciais("maria")).to eq("M")
+    end
+  end
+
+  describe "#qrcode_svg" do
+    it "gera um SVG acessível com o QR Code" do
+      svg = Nokogiri::HTML5.fragment(helper.qrcode_svg("conteudo", rotulo: "QR Code do PIX")).at("svg")
+
+      expect(svg["class"]).to eq("qrcode")
+      expect(svg["role"]).to eq("img")
+      expect(svg["aria-label"]).to eq("QR Code do PIX")
+    end
+  end
+
+  describe "#tempo_restante" do
+    it "mostra minutos e segundos" do
+      expect(helper.tempo_restante(60)).to eq("1:00")
+      expect(helper.tempo_restante(5)).to eq("0:05")
     end
   end
 end

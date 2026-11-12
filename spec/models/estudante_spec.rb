@@ -118,6 +118,32 @@ RSpec.describe Estudante, type: :model do
     expect(estudante.primeiro_nome).to eq("Maria")
   end
 
+  describe "#creditar!" do
+    it "soma o valor ao saldo no banco de dados" do
+      estudante.save!
+      estudante.creditar!(BigDecimal("20.5"))
+
+      expect(estudante.reload.saldo).to eq(BigDecimal("20.5"))
+    end
+
+    it "não perde créditos feitos por outra cópia do mesmo estudante" do
+      estudante.save!
+      outra_copia = described_class.find(estudante.id)
+
+      estudante.creditar!(10)
+      outra_copia.creditar!(5)
+
+      expect(estudante.reload.saldo).to eq(15)
+    end
+  end
+
+  it "tem as recargas removidas junto com ele" do
+    estudante.save!
+    estudante.recargas.create!(metodo: :cartao, status: :confirmada, valor: 10)
+
+    expect { estudante.destroy }.to change(Recarga, :count).by(-1)
+  end
+
   it "é removido junto com o usuário" do
     estudante.save!
 
