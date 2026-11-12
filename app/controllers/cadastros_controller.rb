@@ -1,4 +1,7 @@
 class CadastrosController < ApplicationController
+  permitir_acesso_sem_login
+  before_action :redirecionar_se_logado
+
   def new
     @cadastro = CadastroEstudante.new
   end

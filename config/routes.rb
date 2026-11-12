@@ -9,12 +9,15 @@ Rails.application.routes.draw do
   get  "cadastro", to: "cadastros#new", as: :cadastro
   post "cadastro", to: "cadastros#create"
 
-  get "login", to: "sessoes#new", as: :login
+  # Login do estudante (features/login_estudante.feature)
+  get    "login",  to: "sessoes#new", as: :login
+  post   "login",  to: "sessoes#create"
+  delete "logout", to: "sessoes#destroy", as: :logout
+
+  # Página inicial do estudante logado
+  root "inicio#show"
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
