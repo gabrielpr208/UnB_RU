@@ -1,0 +1,14 @@
+<%# locals: (usuario:) -%>
+<div class="usuario-logado">
+  <div class="usuario-logado__dados">
+    <strong class="usuario-logado__nome"><%= usuario.nome %></strong>
+    <% if usuario.estudante %>
+      <span class="usuario-logado__papel">Estudante · <%= usuario.estudante.matricula %></span>
+    <% end %>
+  </div>
+  <span class="avatar" aria-hidden="true"><%= iniciais(usuario.nome) %></span>
+  <%= button_to logout_path, method: :delete, class: "botao botao--secundario botao--pequeno",
+                             form_class: "usuario-logado__sair" do %>
+    <%= icone :sair %> Sair
+  <% end %>
+</div>

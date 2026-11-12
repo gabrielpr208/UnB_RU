@@ -33,15 +33,15 @@
       <fieldset class="formulario__grupo">
         <legend class="rotulo-secao">Identificação</legend>
 
-        <%= render "campo", form: f, atributo: :nome, rotulo: "Nome completo", simbolo: :usuario,
+        <%= render "shared/campo", form: f, atributo: :nome, rotulo: "Nome completo", simbolo: :usuario,
                             opcoes: { autocomplete: "name", placeholder: "Ex.: Maria Souza" } %>
 
         <div class="formulario__linha">
-          <%= render "campo", form: f, atributo: :matricula, rotulo: "Matrícula", simbolo: :matricula,
+          <%= render "shared/campo", form: f, atributo: :matricula, rotulo: "Matrícula", simbolo: :matricula,
                               dica: "9 dígitos, sem barra. Ex.: 231012345",
                               opcoes: { inputmode: "numeric", autocomplete: "username", placeholder: "231012345" } %>
 
-          <%= render "campo", form: f, atributo: :email, rotulo: "E-mail", simbolo: :email, tipo: :email_field,
+          <%= render "shared/campo", form: f, atributo: :email, rotulo: "E-mail", simbolo: :email, tipo: :email_field,
                               opcoes: { autocomplete: "email", placeholder: "voce@aluno.unb.br" } %>
         </div>
       </fieldset>
@@ -50,11 +50,11 @@
         <legend class="rotulo-secao">Senha de acesso</legend>
 
         <div class="formulario__linha">
-          <%= render "campo", form: f, atributo: :senha, rotulo: "Senha", simbolo: :cadeado, tipo: :password_field,
+          <%= render "shared/campo", form: f, atributo: :senha, rotulo: "Senha", simbolo: :cadeado, tipo: :password_field,
                               dica: "Mínimo de #{Usuario::TAMANHO_MINIMO_SENHA} caracteres",
                               opcoes: { autocomplete: "new-password" } %>
 
-          <%= render "campo", form: f, atributo: :confirmacao_senha, rotulo: "Confirmação de senha", simbolo: :cadeado,
+          <%= render "shared/campo", form: f, atributo: :confirmacao_senha, rotulo: "Confirmação de senha", simbolo: :cadeado,
                               tipo: :password_field, dica: "Repita a senha escolhida",
                               opcoes: { autocomplete: "new-password" } %>
         </div>
