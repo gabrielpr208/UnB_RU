@@ -2,6 +2,7 @@ class Estudante < ApplicationRecord
   self.primary_key = :usuario_id
 
   belongs_to :usuario
+  has_many :recargas, dependent: :destroy
 
   delegate :nome, :email, to: :usuario
 
@@ -34,5 +35,10 @@ class Estudante < ApplicationRecord
 
   def primeiro_nome
     nome.split.first
+  end
+
+  # Soma direto no banco (saldo = saldo + valor), sem perder créditos de pagamentos simultâneos.
+  def creditar!(valor)
+    increment!(:saldo, valor, touch: true)
   end
 end
