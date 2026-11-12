@@ -1,0 +1,18 @@
+<%# locals: (form:, atributo:, rotulo:, simbolo:, tipo: :text_field, dica: nil, opcoes: {}) -%>
+<% erros = form.object.errors[atributo] %>
+<% id_mensagem = "#{form.object_name}_#{atributo}_mensagem" %>
+<div class="campo<%= " campo--invalido" if erros.any? %>">
+  <%= form.label atributo, rotulo, class: "campo__rotulo" %>
+  <div class="campo__controle">
+    <%= icone simbolo, classe: "campo__icone" %>
+    <%= form.public_send tipo, atributo,
+          class: "campo__entrada",
+          aria: { invalid: erros.any?, describedby: (id_mensagem if erros.any? || dica) },
+          **opcoes %>
+  </div>
+  <% if erros.any? %>
+    <p class="campo__erro" id="<%= id_mensagem %>"><%= icone :alerta %><%= erros.first %></p>
+  <% elsif dica %>
+    <p class="campo__dica" id="<%= id_mensagem %>"><%= dica %></p>
+  <% end %>
+</div>
