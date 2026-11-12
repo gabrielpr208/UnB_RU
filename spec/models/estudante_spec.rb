@@ -83,6 +83,41 @@ RSpec.describe Estudante, type: :model do
     end
   end
 
+  describe ".autenticar" do
+    let!(:existente) { criar_estudante(matricula: "231012345") }
+
+    it "devolve o estudante quando matrícula e senha conferem" do
+      expect(described_class.autenticar(matricula: "231012345", senha: "senha123")).to eq(existente)
+    end
+
+    it "ignora espaços nas pontas da matrícula" do
+      expect(described_class.autenticar(matricula: " 231012345 ", senha: "senha123")).to eq(existente)
+    end
+
+    {
+      "senha errada" => [ "231012345", "senha321" ],
+      "matrícula inexistente" => [ "231012346", "senha123" ],
+      "matrícula em branco" => [ "", "senha123" ],
+      "matrícula nula" => [ nil, "senha123" ],
+      "senha em branco" => [ "231012345", "" ],
+      "senha nula" => [ "231012345", nil ]
+    }.each do |caso, (matricula, senha)|
+      it "devolve nil com #{caso}" do
+        expect(described_class.autenticar(matricula:, senha:)).to be_nil
+      end
+    end
+
+    it "calcula um hash de senha mesmo quando a matrícula não existe" do
+      expect(BCrypt::Password).to receive(:create).once.and_call_original
+
+      described_class.autenticar(matricula: "231012346", senha: "senha123")
+    end
+  end
+
+  it "expõe o primeiro nome" do
+    expect(estudante.primeiro_nome).to eq("Maria")
+  end
+
   it "é removido junto com o usuário" do
     estudante.save!
 
