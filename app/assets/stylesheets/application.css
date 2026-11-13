@@ -838,6 +838,12 @@ a:hover {
   overflow-wrap: anywhere;
 }
 
+.lista-dados .lista-dados__indisponivel {
+  color: var(--cor-texto-suave);
+  font-weight: 400;
+  font-style: italic;
+}
+
 /* ---------- Coluna lateral ---------- */
 
 .lista-regras,
