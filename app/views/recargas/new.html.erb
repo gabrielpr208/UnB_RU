@@ -1,0 +1,53 @@
+<% content_for :title, "Adicionar créditos" %>
+<% content_for :abas, render("shared/abas_estudante") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+    <span class="selo">Pagamento fictício</span>
+  </div>
+  <h1 class="titulo-pagina">Adicionar créditos</h1>
+  <p class="subtitulo-pagina">
+    Recarregue seu saldo via PIX ou cartão de crédito para entrar nos restaurantes universitários.
+  </p>
+</div>
+
+<div class="grade-cadastro">
+  <section class="cartao" aria-labelledby="titulo-recarga">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-recarga">Nova recarga</h2>
+      <nav class="segmentos" aria-label="Forma de pagamento">
+        <% { "pix" => [ "PIX", :qrcode ], "cartao" => [ "Cartão de crédito", :cartao ] }.each do |forma, (texto, simbolo)| %>
+          <%= link_to nova_recarga_path(forma:),
+                      class: [ "segmentos__item", ("segmentos__item--ativo" if @forma == forma) ],
+                      aria: { current: ("page" if @forma == forma) } do %>
+            <%= icone simbolo %> <%= texto %>
+          <% end %>
+        <% end %>
+      </nav>
+    </header>
+
+    <% if @forma == "pix" %>
+      <%= render "formulario_pix", recarga: @recarga_pix %>
+    <% else %>
+      <%= render "formulario_cartao", pagamento: @pagamento_cartao %>
+    <% end %>
+  </section>
+
+  <aside class="coluna-lateral">
+    <%= render "shared/saldo", estudante: @estudante %>
+
+    <section class="cartao" aria-labelledby="titulo-regras">
+      <h2 class="cartao__titulo" id="titulo-regras">Regras da recarga</h2>
+      <ul class="lista-regras">
+        <li>
+          <%= icone :confirmar %>
+          Valor entre <%= reais(Recarga::VALOR_MINIMO) %> e <%= reais(Recarga::VALOR_MAXIMO) %>
+        </li>
+        <li><%= icone :confirmar %> PIX: o código vale por 1 minuto; o saldo entra quando o pagamento é conferido</li>
+        <li><%= icone :confirmar %> Cartão: número com 16 dígitos, CVV com 3 dígitos e validade em dia</li>
+        <li><%= icone :confirmar %> No cartão, o saldo entra na hora</li>
+      </ul>
+    </section>
+  </aside>
+</div>

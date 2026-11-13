@@ -1,10 +1,14 @@
-<%# locals: (form:, atributo:, rotulo:, simbolo:, tipo: :text_field, dica: nil, opcoes: {}) -%>
+<%# locals: (form:, atributo:, rotulo:, simbolo: nil, prefixo: nil, tipo: :text_field, dica: nil, opcoes: {}) -%>
 <% erros = form.object ? form.object.errors[atributo] : [] %>
 <% id_mensagem = "#{form.object_name}_#{atributo}_mensagem" %>
 <div class="campo<%= " campo--invalido" if erros.any? %>">
   <%= form.label atributo, rotulo, class: "campo__rotulo" %>
   <div class="campo__controle">
-    <%= icone simbolo, classe: "campo__icone" %>
+    <% if prefixo %>
+      <span class="campo__prefixo" aria-hidden="true"><%= prefixo %></span>
+    <% else %>
+      <%= icone simbolo, classe: "campo__icone" %>
+    <% end %>
     <%= form.public_send tipo, atributo,
           class: "campo__entrada",
           aria: { invalid: erros.any?, describedby: (id_mensagem if erros.any? || dica) },

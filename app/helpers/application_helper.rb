@@ -16,7 +16,12 @@ module ApplicationHelper
     escudo: '<path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
     sair: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
     carteira: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/>' \
-              '<path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>'
+              '<path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+    adicionar: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/>',
+    copiar: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
+    relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    calendario: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    informacao: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.5h.01"/>'
   }.freeze
 
   def icone(nome, classe: nil)
@@ -30,7 +35,7 @@ module ApplicationHelper
   end
 
   def reais(valor)
-    number_to_currency(valor, unit: "R$", separator: ",", delimiter: ".", format: "%u %n")
+    ValorMonetario.formatar(valor)
   end
 
   def iniciais(nome)
@@ -38,9 +43,21 @@ module ApplicationHelper
     [ partes.first, (partes.last if partes.size > 1) ].compact.map { |parte| parte[0] }.join.upcase
   end
 
+  # Marca a aba da página atual e também das páginas abaixo dela (ex.: /recarga e /recarga/pix/1).
   def link_de_aba(texto, caminho)
-    ativa = request.path == caminho
+    ativa = request.path == caminho || request.path.start_with?("#{caminho}/")
     link_to texto, caminho, class: [ "abas__item", ("abas__item--ativa" if ativa) ],
                             aria: { current: ("page" if ativa) }
+  end
+
+  def qrcode_svg(conteudo, rotulo:)
+    RQRCode::QRCode.new(conteudo).as_svg(
+      module_size: 5, offset: 0, use_path: true, viewbox: true, standalone: true,
+      svg_attributes: { class: "qrcode", role: "img", "aria-label": rotulo }
+    ).html_safe
+  end
+
+  def tempo_restante(segundos)
+    format("%d:%02d", segundos / 60, segundos % 60)
   end
 end

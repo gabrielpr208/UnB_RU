@@ -1,0 +1,79 @@
+<% content_for :title, "Pagamento via PIX" %>
+<% content_for :abas, render("shared/abas_estudante") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+    <span class="selo">Pagamento fictício</span>
+  </div>
+  <h1 class="titulo-pagina">Pagamento via PIX</h1>
+  <p class="subtitulo-pagina">
+    Escaneie o QR Code ou copie o código no app do seu banco. Depois, confira o pagamento para receber os créditos.
+  </p>
+</div>
+
+<div class="grade-cadastro">
+  <section class="cartao pix" aria-labelledby="titulo-pix"
+           data-controller="contagem-regressiva"
+           data-contagem-regressiva-segundos-value="<%= @recarga.segundos_restantes %>">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-pix">QR Code PIX</h2>
+      <span class="selo selo--destaque pix__prazo">
+        <%= icone :relogio %>
+        <span class="pix__prazo-ativo">
+          Expira em <span data-contagem-regressiva-target="tempo"><%= tempo_restante(@recarga.segundos_restantes) %></span>
+        </span>
+        <span class="pix__prazo-esgotado">Código expirado</span>
+      </span>
+    </header>
+
+    <div class="pix__conteudo">
+      <div class="pix__leitura">
+        <div class="pix__qrcode">
+          <%= qrcode_svg(@recarga.codigo_pix, rotulo: "QR Code do PIX de #{reais(@recarga.valor)}") %>
+        </div>
+        <div class="pix__expirado" role="status" data-contagem-regressiva-target="aviso" hidden>
+          <%= icone :relogio %>
+          <p>Código expirado</p>
+          <%= link_to "Gerar novo código", nova_recarga_path %>
+        </div>
+      </div>
+
+      <div class="pix__detalhes">
+        <div>
+          <p class="rotulo-secao">Valor a pagar</p>
+          <p class="pix__valor"><%= reais(@recarga.valor) %></p>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="codigo_pix">Pix copia e cola</label>
+          <div class="copiar" data-controller="copiar">
+            <input id="codigo_pix" class="campo__entrada copiar__codigo" type="text" readonly
+                   value="<%= @recarga.codigo_pix %>" data-copiar-target="origem">
+            <button type="button" class="botao botao--secundario" data-action="copiar#copiar">
+              <%= icone :copiar %> <span data-copiar-target="rotulo">Copiar</span>
+            </button>
+          </div>
+        </div>
+
+        <ol class="lista-numerada">
+          <li>Abra o app do seu banco e escolha pagar com PIX</li>
+          <li>Escaneie o QR Code ou cole o código acima</li>
+          <li>Volte aqui e clique em <strong>Conferir pagamento</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="formulario__acoes">
+      <%= link_to "Cancelar e voltar", nova_recarga_path, class: "formulario__alternativa" %>
+      <%= button_to conferir_pix_path(@recarga), class: "botao botao--sucesso" do %>
+        <%= icone :confirmar %> Conferir pagamento
+      <% end %>
+    </div>
+  </section>
+
+  <aside class="coluna-lateral">
+    <%= render "shared/saldo", estudante: @estudante %>
+    <%= render "aviso_demonstracao" %>
+  </aside>
+</div>

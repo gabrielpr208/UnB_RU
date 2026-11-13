@@ -10,14 +10,7 @@
 </div>
 
 <div class="grade-painel">
-  <section class="cartao indicador" aria-labelledby="titulo-saldo">
-    <header class="indicador__cabecalho">
-      <h2 class="indicador__rotulo" id="titulo-saldo">Saldo disponível</h2>
-      <span class="indicador__icone"><%= icone :carteira %></span>
-    </header>
-    <p class="indicador__valor"><%= reais(@estudante.saldo) %></p>
-    <p class="indicador__rodape">Usado para pagar as refeições na catraca</p>
-  </section>
+  <%= render "shared/saldo", estudante: @estudante, atalho: true %>
 
   <section class="cartao" aria-labelledby="titulo-conta">
     <h2 class="cartao__titulo" id="titulo-conta">Dados da conta</h2>
