@@ -1,0 +1,114 @@
+<% content_for :title, "Extrato" %>
+<% content_for :abas, render("shared/abas_estudante") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+  </div>
+  <h1 class="titulo-pagina">Extrato</h1>
+  <p class="subtitulo-pagina">
+    Acompanhe as recargas que entraram no seu saldo e as refeições pagas com ele.
+  </p>
+</div>
+
+<div class="grade-cadastro">
+  <section class="cartao" aria-labelledby="titulo-movimentacoes">
+    <%= form_with model: @extrato, scope: "", url: extrato_path, method: :get, class: "filtros",
+                  data: { controller: "envio-automatico" } do |f| %>
+      <header class="cartao__cabecalho">
+        <h2 class="cartao__titulo" id="titulo-movimentacoes">Movimentações</h2>
+        <fieldset class="segmentos" aria-label="Tipo de movimentação">
+          <% { "todos" => "Todas", "recargas" => "Recargas", "refeicoes" => "Refeições" }.each do |tipo, rotulo| %>
+            <label class="segmentos__item">
+              <%= f.radio_button :tipo, tipo, class: "segmentos__opcao", data: { action: "envio-automatico#enviar" } %>
+              <%= rotulo %>
+            </label>
+          <% end %>
+        </fieldset>
+      </header>
+
+      <div class="filtros__campos">
+        <%= render "shared/campo", form: f, atributo: :data_inicial, rotulo: "Data inicial", simbolo: :calendario,
+                                   tipo: :date_field %>
+        <%= render "shared/campo", form: f, atributo: :data_final, rotulo: "Data final", simbolo: :calendario,
+                                   tipo: :date_field %>
+        <%= render "shared/campo", form: f, atributo: :valor_minimo, rotulo: "Valor mínimo", prefixo: "R$",
+                                   opcoes: { inputmode: "decimal", placeholder: "0,00", autocomplete: "off" } %>
+        <%= render "shared/campo", form: f, atributo: :valor_maximo, rotulo: "Valor máximo", prefixo: "R$",
+                                   opcoes: { inputmode: "decimal", placeholder: "0,00", autocomplete: "off" } %>
+      </div>
+
+      <div class="filtros__acoes">
+        <% if @extrato.filtrado? %>
+          <%= link_to extrato_path, class: "botao botao--secundario" do %>
+            <%= icone :limpar %> Limpar filtros
+          <% end %>
+        <% end %>
+        <%= f.button type: "submit", name: nil, class: "botao botao--primario" do %>
+          <%= icone :filtro %> Filtrar
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @extrato.errors.any? %>
+      <div class="alerta alerta--erro" role="alert">
+        <%= icone :alerta, classe: "alerta__icone" %>
+        <div>
+          <p class="alerta__titulo">Não foi possível filtrar o extrato</p>
+          <p class="alerta__texto">Corrija os filtros destacados e tente novamente.</p>
+        </div>
+      </div>
+    <% elsif @extrato.movimentacoes.empty? %>
+      <div class="vazio">
+        <span class="vazio__icone"><%= icone :extrato %></span>
+        <% if @extrato.filtrado? %>
+          <p class="vazio__titulo">Nenhuma movimentação encontrada com esses filtros</p>
+          <p class="vazio__texto">Tente outro período ou outra faixa de valor.</p>
+        <% else %>
+          <p class="vazio__titulo">Sem movimentações por enquanto</p>
+          <p class="vazio__texto">Suas recargas e refeições vão aparecer aqui.</p>
+        <% end %>
+      </div>
+    <% else %>
+      <table class="extrato">
+        <thead>
+          <tr>
+            <th scope="col">Movimentação</th>
+            <th scope="col">Data e hora</th>
+            <th scope="col">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "movimentacao", collection: @extrato.movimentacoes %>
+        </tbody>
+      </table>
+    <% end %>
+  </section>
+
+  <aside class="coluna-lateral">
+    <%= render "shared/saldo", estudante: @estudante, atalho: true %>
+
+    <% if @extrato.errors.none? && @extrato.movimentacoes.any? %>
+      <section class="cartao" aria-labelledby="titulo-resumo">
+        <h2 class="cartao__titulo" id="titulo-resumo">Resumo</h2>
+        <p class="cartao__descricao">
+          <%= @extrato.filtrado? ? "Considera só as movimentações filtradas" : "Considera todas as movimentações" %>
+        </p>
+        <dl class="lista-dados">
+          <div>
+            <dt>Entradas</dt>
+            <dd class="valor--entrada"><%= reais_com_sinal(@extrato.entradas) %></dd>
+          </div>
+          <div>
+            <dt>Saídas</dt>
+            <dd><%= reais_com_sinal(@extrato.saidas) %></dd>
+          </div>
+          <div>
+            <dt>Movimentações</dt>
+            <dd><%= @extrato.movimentacoes.size %></dd>
+          </div>
+        </dl>
+      </section>
+    <% end %>
+  </aside>
+</div>

@@ -16,6 +16,7 @@ RSpec.describe "Login do estudante", type: :request do
       expect(response.body).to include(%(<label class="campo__rotulo" for="login_matricula">Matrícula</label>))
       expect(response.body).to include(%(<label class="campo__rotulo" for="login_senha">Senha</label>))
       expect(response.body).to include(%(href="#{cadastro_path}"))
+      expect(response.body).to include(%(href="#{login_controle_path}"))
     end
 
     it "manda quem já está logado para a página inicial" do
@@ -60,6 +61,21 @@ RSpec.describe "Login do estudante", type: :request do
       logar
 
       expect(response).to redirect_to(root_path(origem: "teste"))
+    end
+
+    it "não volta para uma página da Aplicação de Controle guardada antes do login" do
+      get controle_path
+      logar
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "encerra a sessão de funcionário aberta no mesmo navegador" do
+      funcionario = criar_funcionario
+      entrar_como_funcionario(funcionario)
+
+      expect { logar }.to change(funcionario.usuario.sessoes, :count).by(-1)
+                      .and change(estudante.usuario.sessoes, :count).by(1)
     end
   end
 
@@ -123,6 +139,15 @@ RSpec.describe "Login do estudante", type: :request do
       delete logout_path
       get root_path
 
+      expect(response).to redirect_to(login_path)
+    end
+  end
+
+  describe "DELETE /logout de quem não é estudante" do
+    it "também encerra a sessão de um funcionário" do
+      entrar_como_funcionario(criar_funcionario)
+
+      expect { delete logout_path }.to change(Sessao, :count).by(-1)
       expect(response).to redirect_to(login_path)
     end
   end

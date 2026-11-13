@@ -1,0 +1,36 @@
+<% content_for :title, "Entrar na Aplicação de Controle" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Gestão de restaurantes e catracas" %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Aplicação de Controle</span>
+  </div>
+  <h1 class="titulo-pagina">Entrar</h1>
+  <p class="subtitulo-pagina">Acesso exclusivo para funcionários do Restaurante Universitário.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-login">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-login">Login do funcionário</h2>
+    <span class="selo">SIAPE e senha</span>
+  </header>
+
+  <%= form_with scope: :login, url: login_controle_path, class: "formulario", html: { novalidate: true } do |f| %>
+    <div class="formulario__grupo">
+      <%= render "shared/campo", form: f, atributo: :siape, rotulo: "SIAPE", simbolo: :matricula,
+                                 opcoes: { value: @siape, inputmode: "numeric", autocomplete: "username",
+                                           placeholder: "1234567", autofocus: true } %>
+
+      <%= render "shared/campo", form: f, atributo: :senha, rotulo: "Senha", simbolo: :cadeado,
+                                 tipo: :password_field, opcoes: { autocomplete: "current-password" } %>
+    </div>
+
+    <div class="formulario__acoes">
+      <p class="formulario__alternativa">É estudante? <%= link_to "Entrar no Portal do Estudante", login_path %></p>
+      <%= f.button type: "submit", class: "botao botao--primario" do %>
+        Entrar <%= icone :entrar %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
