@@ -1,11 +1,8 @@
 class Estudante < ApplicationRecord
-  self.primary_key = :usuario_id
+  include EspecializacaoDeUsuario
 
-  belongs_to :usuario
   has_many :recargas, dependent: :destroy
   has_many :acessos, dependent: :destroy
-
-  delegate :nome, :email, to: :usuario
 
   normalizes :matricula, with: ->(matricula) { matricula.strip }
 
@@ -19,23 +16,8 @@ class Estudante < ApplicationRecord
 
   validates :saldo, numericality: { greater_than_or_equal_to: 0 }
 
-  # Devolve o estudante dono da matrícula se a senha conferir; nil caso contrário.
   def self.autenticar(matricula:, senha:)
-    return if matricula.blank? || senha.blank?
-
-    estudante = includes(:usuario).find_by(matricula: matricula.to_s.strip)
-
-    if estudante
-      estudante if estudante.usuario.authenticate_senha(senha)
-    else
-      # Calcula um hash mesmo assim, para que o tempo de resposta não revele quais matrículas existem.
-      Usuario.new(senha:)
-      nil
-    end
-  end
-
-  def primeiro_nome
-    nome.split.first
+    autenticar_por(matricula:, senha:)
   end
 
   # Soma direto no banco (saldo = saldo + valor), sem perder créditos de pagamentos simultâneos.
