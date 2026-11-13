@@ -62,6 +62,23 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe "#reais_com_sinal" do
+    it "põe + nas entradas e - nas saídas" do
+      expect(helper.reais_com_sinal(BigDecimal("1020"))).to eq("+R$ 1.020,00")
+      expect(helper.reais_com_sinal(BigDecimal("-4.5"))).to eq("-R$ 4,50")
+    end
+
+    it "não põe sinal no zero" do
+      expect(helper.reais_com_sinal(0)).to eq("R$ 0,00")
+    end
+  end
+
+  describe "#data_e_hora" do
+    it "mostra a data e a hora no fuso de Brasília" do
+      expect(helper.data_e_hora(Time.utc(2026, 10, 13, 2, 30))).to eq("12/10/2026 23:30")
+    end
+  end
+
   describe "#iniciais" do
     it "usa a primeira letra do primeiro e do último nome" do
       expect(helper.iniciais("Maria da Silva Souza")).to eq("MS")
