@@ -1,0 +1,6 @@
+<%= render "cabecalho", titulo: "Novo restaurante",
+                        subtitulo: "Cadastre um restaurante para que os funcionários possam selecioná-lo." %>
+
+<section class="cartao cartao--estreito" aria-label="Novo restaurante">
+  <%= render "formulario", restaurante: @restaurante, botao: "Cadastrar restaurante" %>
+</section>
