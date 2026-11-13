@@ -54,6 +54,10 @@ module ApplicationHelper
     tempo.in_time_zone.strftime("%d/%m/%Y %H:%M")
   end
 
+  def papel_do_funcionario(funcionario)
+    funcionario.administrador? ? "Administrador" : "Funcionário"
+  end
+
   def iniciais(nome)
     partes = nome.split
     [ partes.first, (partes.last if partes.size > 1) ].compact.map { |parte| parte[0] }.join.upcase
