@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_130100) do
+  create_table "acessos", force: :cascade do |t|
+    t.integer "estudante_id", null: false
+    t.datetime "data_hora", null: false
+    t.decimal "valor_cobrado", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
+    t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
+  end
+
+  create_table "catracas", force: :cascade do |t|
+    t.integer "restaurante_id", null: false
+    t.string "identificador", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["restaurante_id", "identificador"], name: "index_catracas_on_restaurante_id_and_identificador", unique: true
+  end
+
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
     t.string "matricula", limit: 9, null: false
     t.decimal "saldo", precision: 10, scale: 2, default: "0.0", null: false
@@ -18,6 +36,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
     t.datetime "updated_at", null: false
     t.index ["matricula"], name: "index_estudantes_on_matricula", unique: true
     t.check_constraint "saldo >= 0", name: "saldo_nao_negativo"
+  end
+
+  create_table "funcionarios", primary_key: "usuario_id", force: :cascade do |t|
+    t.string "siape", limit: 7, null: false
+    t.boolean "administrador", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["siape"], name: "index_funcionarios_on_siape", unique: true
   end
 
   create_table "recargas", force: :cascade do |t|
@@ -38,6 +64,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
     t.check_constraint "valor >= 1 AND valor <= 1000", name: "valor_dentro_do_limite"
   end
 
+  create_table "restaurantes", force: :cascade do |t|
+    t.string "nome", limit: 50, null: false
+    t.string "campus", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["nome"], name: "index_restaurantes_on_nome", unique: true
+    t.check_constraint "campus IN ('Darcy Ribeiro', 'Gama', 'Ceilândia', 'Planaltina')", name: "campus_valido"
+  end
+
   create_table "sessoes", force: :cascade do |t|
     t.integer "usuario_id", null: false
     t.string "endereco_ip"
@@ -56,7 +91,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
     t.index ["email"], name: "index_usuarios_on_email", unique: true
   end
 
+  add_foreign_key "acessos", "estudantes", primary_key: "usuario_id"
+  add_foreign_key "catracas", "restaurantes"
   add_foreign_key "estudantes", "usuarios"
+  add_foreign_key "funcionarios", "usuarios"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"
 end

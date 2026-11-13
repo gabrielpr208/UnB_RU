@@ -12,6 +12,24 @@ RSpec.describe "Página inicial do estudante", type: :request do
     end
   end
 
+  context "logado como funcionário" do
+    before { entrar_como_funcionario(criar_funcionario) }
+
+    it "redireciona para o login do estudante avisando que a página é só para estudantes" do
+      get root_path
+
+      expect(response).to redirect_to(login_path)
+      expect(flash[:alert]).to eq("Acesso permitido apenas para estudantes")
+    end
+
+    it "deixa o funcionário ver o login do estudante, sem redirecionar de novo" do
+      get login_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Login do estudante")
+    end
+  end
+
   context "com login" do
     before do
       estudante.update!(saldo: BigDecimal("1234.5"))

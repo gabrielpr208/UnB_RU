@@ -24,6 +24,22 @@ Rails.application.routes.draw do
   post "recarga/pix/:id/conferir", to: "recargas#conferir_pix", as: :conferir_pix
   post "recarga/cartao",           to: "recargas#pagar_cartao", as: :pagar_cartao
 
+  # Extrato de recargas e refeições, com filtros (features/extrato.feature)
+  get "extrato", to: "extratos#show", as: :extrato
+
+  # Aplicação de Controle, só para funcionários: login com SIAPE (features/autenticacao_funcionario.feature)
+  scope "controle", module: "controle" do
+    get    "login",  to: "sessoes#new",     as: :login_controle
+    post   "login",  to: "sessoes#create"
+    delete "logout", to: "sessoes#destroy", as: :logout_controle
+  end
+  get "controle", to: "controle/inicio#show", as: :controle
+
+  # Gestão de restaurantes pelo administrador (features/gerencia_restaurantes.feature)
+  namespace :controle do
+    resources :restaurantes, except: :show
+  end
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker

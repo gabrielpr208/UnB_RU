@@ -1,0 +1,14 @@
+<%# locals: (titulo:, subtitulo:) -%>
+<% content_for :title, titulo %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Gestão de restaurantes e catracas" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Aplicação de Controle</span>
+    <span class="selo">Administrador</span>
+  </div>
+  <h1 class="titulo-pagina"><%= titulo %></h1>
+  <p class="subtitulo-pagina"><%= subtitulo %></p>
+</div>
