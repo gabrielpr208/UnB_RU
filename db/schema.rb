@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_120000) do
+  create_table "acessos", force: :cascade do |t|
+    t.integer "estudante_id", null: false
+    t.datetime "data_hora", null: false
+    t.decimal "valor_cobrado", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
+    t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
+  end
+
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
     t.string "matricula", limit: 9, null: false
     t.decimal "saldo", precision: 10, scale: 2, default: "0.0", null: false
@@ -56,6 +66,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
     t.index ["email"], name: "index_usuarios_on_email", unique: true
   end
 
+  add_foreign_key "acessos", "estudantes", primary_key: "usuario_id"
   add_foreign_key "estudantes", "usuarios"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"

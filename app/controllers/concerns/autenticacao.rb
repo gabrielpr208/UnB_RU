@@ -39,7 +39,12 @@ module Autenticacao
 
   def pedir_login
     session[:retornar_para] = request.url if request.get? || request.head?
-    redirect_to login_path, alert: "Você deve estar logado para acessar esta página"
+    redirect_to login_path, alert: mensagem_para_pedir_login
+  end
+
+  # Cada controller pode trocar a mensagem para dizer o que o estudante estava tentando ver.
+  def mensagem_para_pedir_login
+    "Você deve estar logado para acessar esta página"
   end
 
   def destino_apos_login

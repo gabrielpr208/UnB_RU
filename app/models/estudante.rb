@@ -3,6 +3,7 @@ class Estudante < ApplicationRecord
 
   belongs_to :usuario
   has_many :recargas, dependent: :destroy
+  has_many :acessos, dependent: :destroy
 
   delegate :nome, :email, to: :usuario
 

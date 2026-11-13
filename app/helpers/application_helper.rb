@@ -21,7 +21,13 @@ module ApplicationHelper
     copiar: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
     relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     calendario: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
-    informacao: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.5h.01"/>'
+    informacao: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.5h.01"/>',
+    refeicao: '<path d="M4 3v6a3 3 0 0 0 3 3v9"/><path d="M10 3v6a3 3 0 0 1-3 3"/><path d="M7 3v5"/>' \
+              '<path d="M20 15V3a4 4 0 0 0-4 4v6a2 2 0 0 0 2 2h2zm0 0v6"/>',
+    extrato: '<path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-2 2-2-2-2 2-2-2-3 2V4a1 1 0 0 1 1-1z"/>' \
+             '<path d="M9 8h6"/><path d="M9 12h6"/>',
+    filtro: '<path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/>',
+    limpar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
   }.freeze
 
   def icone(nome, classe: nil)
@@ -36,6 +42,16 @@ module ApplicationHelper
 
   def reais(valor)
     ValorMonetario.formatar(valor)
+  end
+
+  # Valor com sinal, como no extrato: "+R$ 20,00" para entradas e "-R$ 4,50" para saídas.
+  def reais_com_sinal(valor)
+    sinal = if valor.positive? then "+" elsif valor.negative? then "-" end
+    "#{sinal}#{reais(valor.abs)}"
+  end
+
+  def data_e_hora(tempo)
+    tempo.in_time_zone.strftime("%d/%m/%Y %H:%M")
   end
 
   def iniciais(nome)
