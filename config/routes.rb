@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   post "recarga/pix/:id/conferir", to: "recargas#conferir_pix", as: :conferir_pix
   post "recarga/cartao",           to: "recargas#pagar_cartao", as: :pagar_cartao
 
+  # Extrato de recargas e refeições, com filtros (features/extrato.feature)
+  get "extrato", to: "extratos#show", as: :extrato
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
