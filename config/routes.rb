@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   root "inicio#show"
 
   # Recarga de saldo fictícia via PIX ou cartão (features/recarga_saldo.feature)
+  get "cardapio", to: "cardapios#show", as: :cardapio
+
   get  "recarga",                  to: "recargas#new",          as: :nova_recarga
   post "recarga/pix",              to: "recargas#gerar_pix",    as: :gerar_pix
   get  "recarga/pix/:id",          to: "recargas#pix",          as: :recarga_pix
