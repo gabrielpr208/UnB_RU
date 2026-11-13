@@ -15,6 +15,13 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe "#papel_do_funcionario" do
+    it "diferencia o administrador do funcionário comum" do
+      expect(helper.papel_do_funcionario(Funcionario.new(administrador: false))).to eq("Funcionário")
+      expect(helper.papel_do_funcionario(Funcionario.new(administrador: true))).to eq("Administrador")
+    end
+  end
+
   describe "#link_de_aba" do
     def aba(caminho_atual, metodo: "GET")
       helper.request.path = caminho_atual
