@@ -53,6 +53,9 @@ Rails.application.routes.draw do
 
     get "entrada", to: "entradas#new", as: :entrada
     post "entrada", to: "entradas#create"
+
+    # Histórico de todos os acessos, para o administrador (features/relatorio_global.feature)
+    get "relatorio", to: "relatorios#show", as: :relatorio
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
