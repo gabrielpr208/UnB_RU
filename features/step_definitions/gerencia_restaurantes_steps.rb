@@ -22,7 +22,8 @@ Dado("que existem os seguintes restaurantes:") do |tabela|
 end
 
 Dado("que o restaurante {string} possui a catraca {string}") do |nome, identificador|
-  Restaurante.find_by!(nome:).catracas.create!(identificador:)
+  # Outras features (ex.: pdf_relatorio) usam este passo sem cadastrar o restaurante antes.
+  restaurante_chamado(nome).catracas.create!(identificador:)
 end
 
 Quando("eu cadastro o restaurante {string} no campus {string}") do |nome, campus|
