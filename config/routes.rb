@@ -37,8 +37,12 @@ Rails.application.routes.draw do
   end
   get "controle", to: "controle/inicio#show", as: :controle
 
-  # Gestão de restaurantes pelo administrador (features/gerencia_restaurantes.feature)
   namespace :controle do
+    # Escolha do restaurante e da catraca em que o funcionário vai operar (features/configuracao_ponto_acesso.feature)
+    get  "ponto-de-acesso", to: "pontos_acesso#new", as: :ponto_acesso
+    post "ponto-de-acesso", to: "pontos_acesso#create"
+
+    # Gestão de restaurantes pelo administrador (features/gerencia_restaurantes.feature)
     resources :restaurantes, except: :show
   end
 
