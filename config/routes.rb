@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
   # Extrato de recargas e refeições, com filtros (features/extrato.feature)
   get "extrato", to: "extratos#show", as: :extrato
+  # Exportação do extrato em PDF, com os mesmos filtros (features/pdf_historico_estudante.feature)
+  get "extrato/pdf", to: "extratos#pdf", as: :extrato_pdf
 
   # Aplicação de Controle, só para funcionários: login com SIAPE (features/autenticacao_funcionario.feature)
   scope "controle", module: "controle" do

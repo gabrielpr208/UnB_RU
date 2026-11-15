@@ -1238,3 +1238,8 @@ fieldset.segmentos {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.botao--bloco {
+  width: 100%;
+  margin-top: 12px;
+}
