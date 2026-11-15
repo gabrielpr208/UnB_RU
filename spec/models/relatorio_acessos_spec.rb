@@ -69,6 +69,13 @@ RSpec.describe RelatorioAcessos do
     end
   end
 
+  describe "#totais_por_restaurante" do
+    it "traz todos os restaurantes, inclusive sem acessos, do mais movimentado para o menos, ignorando filtros" do
+      expect(relatorio(restaurante_id: gama.id).totais_por_restaurante)
+        .to eq([ [ "RU Darcy Ribeiro", 2 ], [ "RU Gama", 1 ], [ "RU FCE", 0 ] ])
+    end
+  end
+
   it "só oferece as catracas do restaurante escolhido" do
     expect(relatorio.catracas_disponiveis).to be_empty
     expect(relatorio(restaurante_id: darcy.id).catracas_disponiveis).to eq([ darcy_01, darcy_02 ])
