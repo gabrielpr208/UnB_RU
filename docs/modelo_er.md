@@ -39,7 +39,7 @@ erDiagram
 
     FUNCIONARIO {
         int usuario_id PK, FK
-        string siape UK
+        string siape UK "7 dígitos numéricos"
         boolean administrador "default false"
     }
 

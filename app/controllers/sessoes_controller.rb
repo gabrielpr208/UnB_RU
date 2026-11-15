@@ -1,10 +1,9 @@
 class SessoesController < ApplicationController
-  MENSAGEM_DE_ERRO = "Erro na autenticação. Verifique os dados".freeze
-
-  permitir_acesso_sem_login only: %i[ new create ]
+  # Sair não exige ser estudante: um funcionário logado também pode encerrar a sessão por aqui.
+  permitir_acesso_sem_login
   before_action :redirecionar_se_logado, only: %i[ new create ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: lambda {
-    redirect_to login_path, alert: "Muitas tentativas de login. Aguarde alguns minutos e tente novamente."
+    redirect_to login_path, alert: MENSAGEM_DE_MUITAS_TENTATIVAS
   }
 
   def new
@@ -18,7 +17,7 @@ class SessoesController < ApplicationController
       redirect_to destino_apos_login, notice: "Login realizado com sucesso"
     else
       @matricula = credenciais[:matricula]
-      flash.now[:alert] = MENSAGEM_DE_ERRO
+      flash.now[:alert] = MENSAGEM_DE_ERRO_NO_LOGIN
       render :new, status: :unprocessable_content
     end
   end

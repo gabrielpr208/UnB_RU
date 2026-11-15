@@ -1,0 +1,18 @@
+<%# locals: (movimentacao:) -%>
+<tr class="movimentacao movimentacao--<%= movimentacao.tipo %>">
+  <td>
+    <div class="movimentacao__resumo">
+      <span class="movimentacao__icone"><%= icone(movimentacao.recarga? ? :adicionar : :refeicao) %></span>
+      <div>
+        <span class="movimentacao__tipo"><%= movimentacao.recarga? ? "Recarga" : "Refeição" %></span>
+        <% if movimentacao.detalhe %>
+          <span class="movimentacao__detalhe"><%= movimentacao.detalhe %></span>
+        <% end %>
+      </div>
+    </div>
+  </td>
+  <td class="movimentacao__data">
+    <%= tag.time data_e_hora(movimentacao.data_hora), datetime: movimentacao.data_hora.iso8601 %>
+  </td>
+  <td class="movimentacao__valor"><%= reais_com_sinal(movimentacao.valor) %></td>
+</tr>

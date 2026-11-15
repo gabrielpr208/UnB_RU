@@ -1,0 +1,34 @@
+<% content_for :title, "Aplicação de Controle" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Gestão de restaurantes e catracas" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Aplicação de Controle</span>
+  </div>
+  <h1 class="titulo-pagina">Olá, <%= @funcionario.primeiro_nome %></h1>
+  <p class="subtitulo-pagina">Você está na Aplicação de Controle do Restaurante Universitário.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-conta">
+  <h2 class="cartao__titulo" id="titulo-conta">Dados do funcionário</h2>
+  <dl class="lista-dados">
+    <div>
+      <dt>Nome</dt>
+      <dd><%= @funcionario.nome %></dd>
+    </div>
+    <div>
+      <dt>SIAPE</dt>
+      <dd><%= @funcionario.siape %></dd>
+    </div>
+    <div>
+      <dt>E-mail</dt>
+      <dd><%= @funcionario.email %></dd>
+    </div>
+    <div>
+      <dt>Perfil</dt>
+      <dd><%= papel_do_funcionario(@funcionario) %></dd>
+    </div>
+  </dl>
+</section>

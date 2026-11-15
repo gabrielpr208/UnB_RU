@@ -10,6 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_140000) do
+  create_table "acessos", force: :cascade do |t|
+    t.integer "estudante_id", null: false
+    t.datetime "data_hora", null: false
+    t.decimal "valor_cobrado", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
+    t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
 ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
   create_table "cardapios", force: :cascade do |t|
     t.date "data", null: false
@@ -29,6 +38,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
     t.check_constraint "saldo >= 0", name: "saldo_nao_negativo"
   end
 
+  create_table "funcionarios", primary_key: "usuario_id", force: :cascade do |t|
+    t.string "siape", limit: 7, null: false
+    t.boolean "administrador", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["siape"], name: "index_funcionarios_on_siape", unique: true
   create_table "itens_cardapio", force: :cascade do |t|
     t.integer "cardapio_id", null: false
     t.string "categoria", null: false
@@ -76,7 +91,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
     t.index ["email"], name: "index_usuarios_on_email", unique: true
   end
 
+  add_foreign_key "acessos", "estudantes", primary_key: "usuario_id"
   add_foreign_key "estudantes", "usuarios"
+  add_foreign_key "funcionarios", "usuarios"
   add_foreign_key "itens_cardapio", "cardapios"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"

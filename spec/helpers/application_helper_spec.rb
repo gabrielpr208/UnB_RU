@@ -15,6 +15,13 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe "#papel_do_funcionario" do
+    it "diferencia o administrador do funcionário comum" do
+      expect(helper.papel_do_funcionario(Funcionario.new(administrador: false))).to eq("Funcionário")
+      expect(helper.papel_do_funcionario(Funcionario.new(administrador: true))).to eq("Administrador")
+    end
+  end
+
   describe "#link_de_aba" do
     def aba(caminho_atual, metodo: "GET")
       helper.request.path = caminho_atual
@@ -59,6 +66,23 @@ RSpec.describe ApplicationHelper, type: :helper do
     it "formata valores no padrão brasileiro" do
       expect(helper.reais(BigDecimal("1234.5"))).to eq("R$ 1.234,50")
       expect(helper.reais(0)).to eq("R$ 0,00")
+    end
+  end
+
+  describe "#reais_com_sinal" do
+    it "põe + nas entradas e - nas saídas" do
+      expect(helper.reais_com_sinal(BigDecimal("1020"))).to eq("+R$ 1.020,00")
+      expect(helper.reais_com_sinal(BigDecimal("-4.5"))).to eq("-R$ 4,50")
+    end
+
+    it "não põe sinal no zero" do
+      expect(helper.reais_com_sinal(0)).to eq("R$ 0,00")
+    end
+  end
+
+  describe "#data_e_hora" do
+    it "mostra a data e a hora no fuso de Brasília" do
+      expect(helper.data_e_hora(Time.utc(2026, 10, 13, 2, 30))).to eq("12/10/2026 23:30")
     end
   end
 

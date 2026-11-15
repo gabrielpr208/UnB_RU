@@ -4,11 +4,13 @@
     <strong class="usuario-logado__nome"><%= usuario.nome %></strong>
     <% if usuario.estudante %>
       <span class="usuario-logado__papel">Estudante · <%= usuario.estudante.matricula %></span>
+    <% elsif usuario.funcionario %>
+      <span class="usuario-logado__papel"><%= papel_do_funcionario(usuario.funcionario) %> · SIAPE <%= usuario.funcionario.siape %></span>
     <% end %>
   </div>
   <span class="avatar" aria-hidden="true"><%= iniciais(usuario.nome) %></span>
-  <%= button_to logout_path, method: :delete, class: "botao botao--secundario botao--pequeno",
-                             form_class: "usuario-logado__sair" do %>
+  <%= button_to caminho_do_logout, method: :delete, class: "botao botao--secundario botao--pequeno",
+                                   form_class: "usuario-logado__sair" do %>
     <%= icone :sair %> Sair
   <% end %>
 </div>
