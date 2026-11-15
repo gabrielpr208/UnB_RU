@@ -43,4 +43,15 @@ RSpec.describe Acesso, type: :model do
 
     expect { estudante.destroy }.to change(described_class, :count).by(-1)
   end
+
+  describe ".mais_recentes" do
+    it "ordena do acesso mais recente para o mais antigo" do
+      antigo = described_class.create!(estudante:, catraca: catraca_padrao, valor_cobrado: 4.5,
+                                       data_hora: Time.zone.local(2026, 10, 11, 12))
+      recente = described_class.create!(estudante:, catraca: catraca_padrao, valor_cobrado: 4.5,
+                                        data_hora: Time.zone.local(2026, 10, 12, 12))
+
+      expect(described_class.mais_recentes).to eq([ recente, antigo ])
+    end
+  end
 end

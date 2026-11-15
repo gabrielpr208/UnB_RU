@@ -6,4 +6,6 @@ class Acesso < ApplicationRecord
 
   validates :data_hora, presence: true
   validates :valor_cobrado, numericality: { greater_than: 0 }
+
+  scope :mais_recentes, -> { order(data_hora: :desc) }
 end

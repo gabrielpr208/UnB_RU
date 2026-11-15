@@ -11,21 +11,21 @@ Funcionalidade: Histórico da catraca
   - Acessos devem aparecer do mais recente para o mais antigo
 
   Contexto:
-    Dado que a catraca 01 do RU Darcy Ribeiro tem os seguintes acessos:
+    Dado que a catraca "01" do "RU Darcy Ribeiro" tem os seguintes acessos:
       | identificação |     data_hora    |
       |   123456789   | 11/10/2026 12:05 |
       |   987654321   | 11/10/2026 11:50 |
       |   987654321   | 12/10/2026 12:00 |
       |   123456789   | 11/10/2026 19:00 |
       |   123456789   | 12/10/2026 13:00 |
-    E que a catraca 02 do RU Darcy Ribeiro tem os seguintes acessos:
+    E que a catraca "02" do "RU Darcy Ribeiro" tem os seguintes acessos:
       | identificação |     data_hora    |
       |   987654321   | 13/10/2026 11:50 |
       |   123456789   | 13/10/2026 12:05 |
     E que eu estou logado como funcionário
 
   Cenário: Visualizar histórico da catraca (feliz)
-    Dado que a catraca 01 do RU Darcy Ribeiro está configurada como ponto de acesso
+    Dado que a catraca "01" do "RU Darcy Ribeiro" está configurada como ponto de acesso
     Quando consulto o histórico
     Então eu devo ver os seguintes acessos, nesta ordem:
       | identificação |     data_hora    |
