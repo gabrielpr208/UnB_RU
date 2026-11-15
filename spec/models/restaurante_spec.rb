@@ -42,6 +42,12 @@ RSpec.describe Restaurante, type: :model do
       expect(erros(novo_restaurante, :nome)).to eq([ "Já existe um restaurante com este nome" ])
       expect(erros(novo_restaurante(nome: "ru darcy ribeiro"), :nome)).to eq([ "Já existe um restaurante com este nome" ])
     end
+
+    it "conta como repetido um nome igual com espaços sobrando" do
+      novo_restaurante.save!
+
+      expect(erros(novo_restaurante(nome: "  RU  Darcy Ribeiro "), :nome)).to eq([ "Já existe um restaurante com este nome" ])
+    end
   end
 
   describe "campus" do
