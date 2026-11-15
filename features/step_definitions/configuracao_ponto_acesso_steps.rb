@@ -13,7 +13,7 @@ end
 World(ConfiguracaoPontoAcessoSteps)
 
 Dado("que eu acabei de fazer login bem-sucedido como funcionário") do
-  @funcionario = criar_funcionario_com_login(siape: "1234567", senha: AutenticacaoSteps::SENHA_PADRAO)
+  @funcionario = criar_funcionario_com_login
 
   fazer_login_de_funcionario("SIAPE" => @funcionario.siape, "senha" => AutenticacaoSteps::SENHA_PADRAO)
   page.assert_current_path(controle_path)
