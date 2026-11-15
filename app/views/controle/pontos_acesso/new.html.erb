@@ -1,0 +1,67 @@
+<% content_for :title, "Ponto de acesso" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Gestão de restaurantes e catracas" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Aplicação de Controle</span>
+  </div>
+  <h1 class="titulo-pagina">Ponto de acesso</h1>
+  <p class="subtitulo-pagina">Escolha o restaurante e a catraca em que você vai operar. As entradas são registradas nesse ponto de acesso.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-ponto-acesso">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-ponto-acesso">Configurar ponto de acesso</h2>
+    <span class="selo">Restaurante e catraca</span>
+  </header>
+
+  <% if @ponto_acesso_atual %>
+    <div class="alerta alerta--info" role="status">
+      <%= icone :informacao, classe: "alerta__icone" %>
+      <div>
+        <p class="alerta__titulo">
+          Ponto de acesso atual: <%= @ponto_acesso_atual.restaurante.nome %> · catraca <%= @ponto_acesso_atual.catraca.identificador %>
+        </p>
+        <p class="alerta__texto">Ao confirmar outro ponto de acesso, o atual é encerrado.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_with model: @configuracao, url: controle_ponto_acesso_path, class: "formulario", html: { novalidate: true } do |f| %>
+    <% if @configuracao.errors.any? %>
+      <div class="alerta alerta--erro" role="alert">
+        <%= icone :alerta, classe: "alerta__icone" %>
+        <div>
+          <p class="alerta__titulo">Ponto de acesso inválido</p>
+          <p class="alerta__texto">Confira o restaurante e o número da catraca e tente novamente.</p>
+        </div>
+      </div>
+    <% end %>
+
+    <fieldset class="formulario__grupo">
+      <legend class="rotulo-secao">Onde você vai operar</legend>
+
+      <%= render "shared/campo", form: f, atributo: :restaurante, rotulo: "Restaurante", simbolo: :local,
+                                 opcoes: { list: "lista-restaurantes", placeholder: "Ex.: RU Darcy Ribeiro",
+                                           autocomplete: "off", autofocus: true } %>
+      <datalist id="lista-restaurantes">
+        <% @restaurantes.each do |restaurante| %>
+          <option value="<%= restaurante.nome %>"></option>
+        <% end %>
+      </datalist>
+
+      <%= render "shared/campo", form: f, atributo: :numero_da_catraca, rotulo: "Número da catraca", simbolo: :entrar,
+                                 dica: "2 dígitos, ex.: 01",
+                                 opcoes: { inputmode: "numeric", placeholder: "01", autocomplete: "off" } %>
+    </fieldset>
+
+    <div class="formulario__acoes">
+      <%= link_to "Cancelar", controle_path, class: "botao botao--secundario" %>
+      <%= f.button type: "submit", class: "botao botao--primario" do %>
+        <%= icone :confirmar %> Confirmar ponto de acesso
+      <% end %>
+    </div>
+  <% end %>
+</section>
