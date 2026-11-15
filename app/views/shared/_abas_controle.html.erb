@@ -4,6 +4,7 @@
     <%= link_de_aba "Ponto de acesso", controle_ponto_acesso_path %>
     <% if Current.usuario.funcionario&.administrador? %>
       <%= link_de_aba "Restaurantes", controle_restaurantes_path %>
+      <%= link_de_aba "Catracas", controle_catracas_path %>
     <% end %>
   </div>
 </nav>

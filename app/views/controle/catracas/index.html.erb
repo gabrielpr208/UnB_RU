@@ -1,0 +1,60 @@
+<%= render "cabecalho", titulo: "Catracas",
+                        subtitulo: "Catracas físicas de cada restaurante, que os funcionários selecionam na Aplicação de Controle." %>
+
+<section class="cartao" aria-labelledby="titulo-catracas">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-catracas">Catracas cadastradas</h2>
+    <%= link_to new_controle_catraca_path, class: "botao botao--primario botao--pequeno" do %>
+      <%= icone :adicionar %> Nova catraca
+    <% end %>
+  </header>
+
+  <% if @catracas.empty? %>
+    <div class="vazio">
+      <span class="vazio__icone"><%= icone :entrar %></span>
+      <p class="vazio__titulo">Nenhuma catraca cadastrada</p>
+      <p class="vazio__texto">Cadastre as catracas de cada restaurante para os funcionários poderem operá-las.</p>
+    </div>
+  <% else %>
+    <table class="tabela" id="catracas">
+      <thead>
+        <tr>
+          <th scope="col">Restaurante</th>
+          <th scope="col">Catraca</th>
+          <th scope="col">Situação</th>
+          <th scope="col"><span class="visualmente-oculto">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @catracas.each do |catraca| %>
+          <% descricao = "catraca #{catraca.identificador} do #{catraca.restaurante.nome}" %>
+          <tr>
+            <td><%= catraca.restaurante.nome %></td>
+            <td class="tabela__destaque"><%= catraca.identificador %></td>
+            <td>
+              <% if (ponto = catraca.ponto_acesso_atual) %>
+                <span class="selo selo--destaque">Em uso · <%= ponto.funcionario.nome %></span>
+              <% else %>
+                <span class="selo">Livre</span>
+              <% end %>
+            </td>
+            <td>
+              <div class="tabela__acoes">
+                <%= link_to edit_controle_catraca_path(catraca), class: "botao botao--secundario botao--pequeno",
+                            aria: { label: "Editar #{descricao}" } do %>
+                  <%= icone :editar %> Editar
+                <% end %>
+                <%= button_to controle_catraca_path(catraca), method: :delete,
+                              class: "botao botao--perigo botao--pequeno",
+                              aria: { label: "Remover #{descricao}" },
+                              form: { data: { turbo_confirm: "Remover a #{descricao}?" } } do %>
+                  <%= icone :remover %> Remover
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</section>

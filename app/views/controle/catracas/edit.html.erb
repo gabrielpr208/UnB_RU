@@ -1,0 +1,6 @@
+<%= render "cabecalho", titulo: "Editar catraca",
+                        subtitulo: "Altere o restaurante ou o identificador da catraca." %>
+
+<section class="cartao cartao--estreito" aria-label="Editar catraca">
+  <%= render "formulario", catraca: @catraca, restaurantes: @restaurantes, botao: "Salvar alterações" %>
+</section>
