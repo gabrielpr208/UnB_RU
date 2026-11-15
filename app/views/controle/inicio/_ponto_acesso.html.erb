@@ -1,0 +1,32 @@
+<%# locals: (ponto_acesso:) -%>
+<section class="cartao indicador" aria-labelledby="titulo-ponto-acesso">
+  <header class="indicador__cabecalho">
+    <h2 class="indicador__rotulo" id="titulo-ponto-acesso">Ponto de acesso</h2>
+    <span class="indicador__icone"><%= icone :local %></span>
+  </header>
+
+  <% if ponto_acesso %>
+    <dl class="lista-dados">
+      <div>
+        <dt>Restaurante</dt>
+        <dd><%= ponto_acesso.restaurante.nome %></dd>
+      </div>
+      <div>
+        <dt>Catraca</dt>
+        <dd><%= ponto_acesso.catraca.identificador %></dd>
+      </div>
+      <div>
+        <dt>Em operação desde</dt>
+        <dd><%= data_e_hora(ponto_acesso.iniciado_em) %></dd>
+      </div>
+    </dl>
+    <%= link_to controle_ponto_acesso_path, class: "botao botao--secundario indicador__acao" do %>
+      <%= icone :editar %> Trocar ponto de acesso
+    <% end %>
+  <% else %>
+    <p class="indicador__rodape">Nenhum ponto de acesso configurado. Escolha o restaurante e a catraca em que você vai operar.</p>
+    <%= link_to controle_ponto_acesso_path, class: "botao botao--primario indicador__acao" do %>
+      <%= icone :local %> Configurar ponto de acesso
+    <% end %>
+  <% end %>
+</section>

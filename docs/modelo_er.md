@@ -60,7 +60,7 @@ erDiagram
         int funcionario_id FK
         int catraca_id FK
         datetime iniciado_em
-        datetime encerrado_em "nulo = catraca em uso"
+        datetime encerrado_em "nulo = catraca em uso; só um em aberto por funcionário e por catraca"
     }
 
     ACESSO {

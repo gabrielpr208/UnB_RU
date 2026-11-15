@@ -108,6 +108,32 @@ RSpec.describe Funcionario, type: :model do
     end
   end
 
+  describe "ponto de acesso" do
+    let(:restaurante) { Restaurante.create!(nome: "RU Darcy Ribeiro", campus: "Darcy Ribeiro") }
+    let(:catraca) { restaurante.catracas.create!(identificador: "01") }
+
+    before { funcionario.save! }
+
+    it "não tem ponto de acesso atual antes de escolher uma catraca" do
+      expect(funcionario.ponto_acesso_atual).to be_nil
+    end
+
+    it "tem como atual o ponto de acesso em aberto" do
+      ponto = PontoAcesso.abrir!(funcionario:, catraca:)
+
+      expect(funcionario.reload.ponto_acesso_atual).to eq(ponto)
+    end
+
+    it "encerra o ponto de acesso atual" do
+      ponto = PontoAcesso.abrir!(funcionario:, catraca:)
+
+      funcionario.encerrar_ponto_acesso
+
+      expect(ponto.reload.encerrado_em).to be_present
+      expect(funcionario.reload.ponto_acesso_atual).to be_nil
+    end
+  end
+
   it "é removido junto com o usuário" do
     funcionario.save!
 

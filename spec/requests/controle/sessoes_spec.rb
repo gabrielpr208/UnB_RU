@@ -158,5 +158,15 @@ RSpec.describe "Login do funcionário", type: :request do
 
       expect(response).to redirect_to(login_controle_path)
     end
+
+    it "encerra o ponto de acesso, deixando a catraca livre" do
+      catraca = Restaurante.create!(nome: "RU Darcy Ribeiro", campus: "Darcy Ribeiro").catracas.create!(identificador: "01")
+      ponto = PontoAcesso.abrir!(funcionario:, catraca:)
+
+      delete logout_controle_path
+
+      expect(ponto.reload.encerrado_em).to be_present
+      expect(funcionario.reload.ponto_acesso_atual).to be_nil
+    end
   end
 end

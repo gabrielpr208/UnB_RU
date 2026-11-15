@@ -24,11 +24,17 @@ module Controle
     end
 
     def destroy
+      liberar_catraca
       encerrar_sessao
       redirect_to login_controle_path, notice: "Você saiu da sua conta", status: :see_other
     end
 
     private
+
+    # Quem sai deixa a catraca livre: no próximo login, escolhe de novo o ponto de acesso.
+    def liberar_catraca
+      retomar_sessao&.usuario&.funcionario&.encerrar_ponto_acesso
+    end
 
     def credenciais
       @credenciais ||= params.expect(login: [ :siape, :senha ])

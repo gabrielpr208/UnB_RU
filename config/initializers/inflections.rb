@@ -17,4 +17,5 @@
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "sessao", "sessoes"
+  inflect.irregular "ponto_acesso", "pontos_acesso"
 end

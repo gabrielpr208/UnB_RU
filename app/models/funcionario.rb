@@ -4,6 +4,10 @@ class Funcionario < ApplicationRecord
 
   TAMANHO_DO_SIAPE = 7
 
+  has_many :pontos_acesso, dependent: :destroy
+  # Catraca em que o funcionário está operando agora (ver PontoAcesso), ou nil se ainda não escolheu.
+  has_one :ponto_acesso_atual, -> { em_aberto }, class_name: "PontoAcesso"
+
   normalizes :siape, with: ->(siape) { siape.strip }
 
   validates :siape, presence: { message: "O SIAPE é obrigatório" }
@@ -16,5 +20,9 @@ class Funcionario < ApplicationRecord
 
   def self.autenticar(siape:, senha:)
     autenticar_por(siape:, senha:)
+  end
+
+  def encerrar_ponto_acesso
+    pontos_acesso.encerrar
   end
 end

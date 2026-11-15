@@ -11,24 +11,28 @@
   <p class="subtitulo-pagina">Você está na Aplicação de Controle do Restaurante Universitário.</p>
 </div>
 
-<section class="cartao cartao--estreito" aria-labelledby="titulo-conta">
-  <h2 class="cartao__titulo" id="titulo-conta">Dados do funcionário</h2>
-  <dl class="lista-dados">
-    <div>
-      <dt>Nome</dt>
-      <dd><%= @funcionario.nome %></dd>
-    </div>
-    <div>
-      <dt>SIAPE</dt>
-      <dd><%= @funcionario.siape %></dd>
-    </div>
-    <div>
-      <dt>E-mail</dt>
-      <dd><%= @funcionario.email %></dd>
-    </div>
-    <div>
-      <dt>Perfil</dt>
-      <dd><%= papel_do_funcionario(@funcionario) %></dd>
-    </div>
-  </dl>
-</section>
+<div class="grade-painel">
+  <%= render "ponto_acesso", ponto_acesso: @ponto_acesso %>
+
+  <section class="cartao" aria-labelledby="titulo-conta">
+    <h2 class="cartao__titulo" id="titulo-conta">Dados do funcionário</h2>
+    <dl class="lista-dados">
+      <div>
+        <dt>Nome</dt>
+        <dd><%= @funcionario.nome %></dd>
+      </div>
+      <div>
+        <dt>SIAPE</dt>
+        <dd><%= @funcionario.siape %></dd>
+      </div>
+      <div>
+        <dt>E-mail</dt>
+        <dd><%= @funcionario.email %></dd>
+      </div>
+      <div>
+        <dt>Perfil</dt>
+        <dd><%= papel_do_funcionario(@funcionario) %></dd>
+      </div>
+    </dl>
+  </section>
+</div>

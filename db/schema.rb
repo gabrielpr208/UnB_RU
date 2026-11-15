@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_120000) do
   create_table "acessos", force: :cascade do |t|
     t.integer "estudante_id", null: false
     t.datetime "data_hora", null: false
@@ -66,6 +66,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_130100) do
     t.check_constraint "variante IS NULL OR variante IN ('padrao', 'ovolactovegetariano', 'vegetariano_estrito')", name: "variante_valida"
   end
 
+  create_table "pontos_acesso", force: :cascade do |t|
+    t.integer "funcionario_id", null: false
+    t.integer "catraca_id", null: false
+    t.datetime "iniciado_em", null: false
+    t.datetime "encerrado_em"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["catraca_id"], name: "index_pontos_acesso_em_aberto_por_catraca", unique: true, where: "encerrado_em IS NULL"
+    t.index ["catraca_id"], name: "index_pontos_acesso_on_catraca_id"
+    t.index ["funcionario_id"], name: "index_pontos_acesso_em_aberto_por_funcionario", unique: true, where: "encerrado_em IS NULL"
+    t.index ["funcionario_id"], name: "index_pontos_acesso_on_funcionario_id"
+    t.check_constraint "encerrado_em IS NULL OR encerrado_em >= iniciado_em", name: "encerrado_depois_de_iniciado"
+  end
+
   create_table "recargas", force: :cascade do |t|
     t.integer "estudante_id", null: false
     t.decimal "valor", precision: 10, scale: 2, null: false
@@ -116,6 +130,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_130100) do
   add_foreign_key "estudantes", "usuarios"
   add_foreign_key "funcionarios", "usuarios"
   add_foreign_key "itens_cardapio", "cardapios"
+  add_foreign_key "pontos_acesso", "catracas"
+  add_foreign_key "pontos_acesso", "funcionarios", primary_key: "usuario_id"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"
 end
