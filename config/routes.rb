@@ -50,6 +50,9 @@ Rails.application.routes.draw do
 
     # Gestão de catracas pelo administrador (features/gerencia_catracas.feature)
     resources :catracas, except: :show
+
+    get "entrada", to: "entradas#new", as: :entrada
+    post "entrada", to: "entradas#create"
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
