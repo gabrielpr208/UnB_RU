@@ -1,9 +1,3 @@
-ParameterType(
-  name: "reais",
-  regexp: /R\$ \d{1,3}(?:\.\d{3})*,\d{2}/,
-  transformer: ->(texto) { ValorMonetario.new.cast(texto) }
-)
-
 module RecargaSaldoSteps
   ABAS = { "PIX" => "PIX", "cartão de crédito" => "Cartão de crédito" }.freeze
   BOTOES = { "PIX" => "Gerar código PIX", "cartão de crédito" => "Efetuar pagamento" }.freeze

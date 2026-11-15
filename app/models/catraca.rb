@@ -8,6 +8,7 @@ class Catraca < ApplicationRecord
   # optional: true para a mensagem do formulário ser a nossa, e não o "must exist" padrão do belongs_to.
   belongs_to :restaurante, optional: true
   has_many :pontos_acesso, dependent: :destroy
+  has_many :acessos
   # Ponto de acesso em aberto nesta catraca, ou nil se nenhum funcionário está operando nela.
   has_one :ponto_acesso_atual, -> { em_aberto }, class_name: "PontoAcesso"
 
@@ -31,6 +32,9 @@ class Catraca < ApplicationRecord
   def remover
     if em_uso?
       errors.add(:base, "Não é possível remover uma catraca em uso")
+      false
+    elsif acessos.exists?
+      errors.add(:base, "Não é possível remover uma catraca com acessos registrados")
       false
     else
       destroy

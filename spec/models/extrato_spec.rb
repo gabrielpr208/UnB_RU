@@ -12,7 +12,7 @@ RSpec.describe Extrato, type: :model do
   end
 
   def refeicao(valor, quando, de: estudante)
-    de.acessos.create!(valor_cobrado: valor, data_hora: em(quando))
+    de.acessos.create!(valor_cobrado: valor, data_hora: em(quando), catraca: catraca_padrao)
   end
 
   def extrato(**filtros)

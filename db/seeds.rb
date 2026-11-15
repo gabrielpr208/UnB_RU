@@ -35,3 +35,22 @@ semana = JSON.parse(Rails.root.join("cardapio.json").read)
     end
   end
 end
+
+# Preço de cada refeição (features/validacao_entrada.feature)
+PrecoRefeicao::REFEICOES.each do |refeicao|
+  PrecoRefeicao.find_or_create_by!(refeicao:) { |preco| preco.valor = 5.20 }
+end
+
+# Restaurante e catraca para testar a Aplicação de Controle
+darcy = Restaurante.find_or_create_by!(nome: "RU Darcy Ribeiro") { |r| r.campus = "Darcy Ribeiro" }
+darcy.catracas.find_or_create_by!(identificador: "01")
+
+# Funcionário (SIAPE 1234567) e estudante (matrícula 231012345) com saldo, ambos com a senha "senha123"
+unless Funcionario.exists?(siape: "1234567")
+  usuario = Usuario.create!(nome: "José Pereira", email: "1234567@unb.br", senha: "senha123")
+  Funcionario.create!(usuario:, siape: "1234567", administrador: true)
+end
+unless Estudante.exists?(matricula: "231012345")
+  usuario = Usuario.create!(nome: "Maria Souza", email: "231012345@aluno.unb.br", senha: "senha123")
+  Estudante.create!(usuario:, matricula: "231012345", saldo: 20)
+end

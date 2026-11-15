@@ -1,15 +1,3 @@
-ParameterType(
-  name: "data",
-  regexp: %r{\d{2}/\d{2}/\d{4}},
-  transformer: ->(data) { Date.strptime(data, "%d/%m/%Y") }
-)
-
-ParameterType(
-  name: "hora",
-  regexp: /\d{2}:\d{2}/,
-  transformer: ->(hora) { hora.split(":").map(&:to_i) }
-)
-
 module CardapioSteps
   REFEICOES = {
     "Café da manhã" => "cafe_da_manha",
@@ -48,10 +36,6 @@ After { travel_back }
 
 Dado("que o cardápio de {data} é:") do |data, tabela|
   tabela.symbolic_hashes.each { |linha| cadastrar_cardapio(data, linha) }
-end
-
-Dado("que agora são {hora} de {data}") do |(hora, minuto), data|
-  travel_to Time.zone.local(data.year, data.month, data.day, hora, minuto)
 end
 
 Quando("eu acesso o cardápio") do

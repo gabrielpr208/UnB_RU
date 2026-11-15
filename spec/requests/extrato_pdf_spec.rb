@@ -8,7 +8,7 @@ RSpec.describe "Exportação do extrato em PDF", type: :request do
   end
 
   def refeicao(valor, quando)
-    estudante.acessos.create!(valor_cobrado: valor, data_hora: quando)
+    estudante.acessos.create!(valor_cobrado: valor, data_hora: quando, catraca: catraca_padrao)
   end
 
   def texto_do_pdf
@@ -76,7 +76,7 @@ RSpec.describe "Exportação do extrato em PDF", type: :request do
 
       it "não inclui movimentações de outros estudantes" do
         outro = criar_estudante(matricula: "231099999", email: "outro@aluno.unb.br")
-        outro.acessos.create!(valor_cobrado: 4.5, data_hora: Time.zone.local(2026, 10, 9, 12, 0))
+        outro.acessos.create!(valor_cobrado: 4.5, data_hora: Time.zone.local(2026, 10, 9, 12, 0), catraca: catraca_padrao)
 
         get extrato_pdf_path
 

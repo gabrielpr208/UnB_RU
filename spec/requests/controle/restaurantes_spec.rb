@@ -48,12 +48,12 @@ RSpec.describe "Gestão de restaurantes", type: :request do
     it "só mostra a aba Restaurantes para o administrador" do
       entrar_como_funcionario(criar_funcionario(siape: "1234567"))
       get controle_path
-      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso" ])
+      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso", "Operar catraca" ])
 
       delete logout_controle_path
       entrar_como_funcionario(administrador)
       get controle_path
-      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso", "Restaurantes", "Catracas" ])
+      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso", "Operar catraca", "Restaurantes", "Catracas" ])
     end
   end
 

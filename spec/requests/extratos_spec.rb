@@ -49,7 +49,7 @@ RSpec.describe "Extrato", type: :request do
                                    confirmada_em: Time.zone.local(2026, 10, 12, 10))
         estudante.recargas.create!(metodo: :cartao, valor: 1000, status: :confirmada,
                                    confirmada_em: Time.zone.local(2026, 10, 10, 11, 30))
-        estudante.acessos.create!(valor_cobrado: 4.5, data_hora: Time.zone.local(2026, 10, 11, 12, 5))
+        estudante.acessos.create!(valor_cobrado: 4.5, data_hora: Time.zone.local(2026, 10, 11, 12, 5), catraca: catraca_padrao)
       end
 
       it "lista as movimentações da mais recente para a mais antiga" do
@@ -71,7 +71,7 @@ RSpec.describe "Extrato", type: :request do
 
       it "não mostra as movimentações de outro estudante" do
         outro = criar_estudante(matricula: "200000000", email: "outro@aluno.unb.br")
-        outro.acessos.create!(valor_cobrado: 9.99, data_hora: Time.zone.local(2026, 10, 12, 12))
+        outro.acessos.create!(valor_cobrado: 9.99, data_hora: Time.zone.local(2026, 10, 12, 12), catraca: catraca_padrao)
 
         get extrato_path
 
