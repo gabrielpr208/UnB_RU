@@ -19,6 +19,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_140000) do
     t.datetime "updated_at", null: false
     t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
     t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
+  create_table "cardapios", force: :cascade do |t|
+    t.date "data", null: false
+    t.string "refeicao", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data", "refeicao"], name: "index_cardapios_on_data_and_refeicao", unique: true
+    t.check_constraint "refeicao IN ('cafe_da_manha', 'almoco', 'jantar')", name: "refeicao_valida"
   end
 
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
@@ -36,6 +44,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_140000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["siape"], name: "index_funcionarios_on_siape", unique: true
+  create_table "itens_cardapio", force: :cascade do |t|
+    t.integer "cardapio_id", null: false
+    t.string "categoria", null: false
+    t.string "variante"
+    t.string "descricao", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cardapio_id"], name: "index_itens_cardapio_on_cardapio_id"
+    t.check_constraint "variante IS NULL OR variante IN ('padrao', 'ovolactovegetariano', 'vegetariano_estrito')", name: "variante_valida"
   end
 
   create_table "recargas", force: :cascade do |t|
@@ -77,6 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_140000) do
   add_foreign_key "acessos", "estudantes", primary_key: "usuario_id"
   add_foreign_key "estudantes", "usuarios"
   add_foreign_key "funcionarios", "usuarios"
+  add_foreign_key "itens_cardapio", "cardapios"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"
 end

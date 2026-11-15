@@ -1,0 +1,47 @@
+<% content_for :title, "Cardápio" %>
+<% content_for :abas, render("shared/abas_estudante") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+  </div>
+  <h1 class="titulo-pagina">Cardápio</h1>
+  <p class="subtitulo-pagina">Veja o que está sendo servido agora nos restaurantes universitários.</p>
+</div>
+
+<% if @janela.nil? %>
+  <div class="alerta alerta--info" role="status">
+    <%= icone :relogio, classe: "alerta__icone" %>
+    <div>
+      <p class="alerta__titulo">Nenhuma refeição sendo servida no momento</p>
+      <p class="alerta__texto">Próxima refeição: <strong><%= @proxima.descricao %></strong></p>
+    </div>
+  </div>
+<% elsif @cardapio.nil? %>
+  <div class="alerta alerta--info" role="status">
+    <%= icone :informacao, classe: "alerta__icone" %>
+    <div>
+      <p class="alerta__titulo">O cardápio desta refeição ainda não foi divulgado</p>
+      <p class="alerta__texto">Refeição em andamento: <%= @janela.nome %></p>
+    </div>
+  </div>
+<% else %>
+  <section class="cartao" aria-labelledby="titulo-refeicao">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-refeicao">Cardápio do <%= @janela.nome %></h2>
+    </header>
+    <p class="cartao__descricao"><%= l(@cardapio.data, format: "%d/%m/%Y") %></p>
+    <dl class="lista-dados">
+      <% CardapiosHelper::OPCOES.each do |variante, rotulo| %>
+        <div>
+          <dt><%= rotulo %></dt>
+          <% if (prato = @cardapio.prato(variante)) %>
+            <dd><%= prato %></dd>
+          <% else %>
+            <dd class="lista-dados__indisponivel">Indisponível nesta refeição</dd>
+          <% end %>
+        </div>
+      <% end %>
+    </dl>
+  </section>
+<% end %>
