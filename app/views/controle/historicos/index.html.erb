@@ -1,0 +1,47 @@
+<% content_for :title, "Histórico da catraca" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Histórico da catraca" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Catraca <%= @catraca.identificador %></span>
+    <span class="selo"><%= icone :local %> <%= @ponto_acesso.restaurante.nome %></span>
+  </div>
+  <h1 class="titulo-pagina">Histórico da catraca</h1>
+  <p class="subtitulo-pagina">Acessos registrados nesta catraca, do mais recente para o mais antigo.</p>
+</div>
+
+<section class="cartao" aria-labelledby="titulo-historico">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-historico">Acessos registrados</h2>
+  </header>
+
+  <% if @acessos.empty? %>
+    <div class="vazio">
+      <span class="vazio__icone"><%= icone :extrato %></span>
+      <p class="vazio__titulo">Nenhum acesso registrado</p>
+      <p class="vazio__texto">As entradas liberadas nesta catraca vão aparecer aqui.</p>
+    </div>
+  <% else %>
+    <table class="tabela historico">
+      <thead>
+        <tr>
+          <th scope="col">Matrícula</th>
+          <th scope="col">Data</th>
+          <th scope="col">Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @acessos.each do |acesso| %>
+          <% data_hora = acesso.data_hora.in_time_zone %>
+          <tr>
+            <td class="tabela__destaque acesso__identificacao"><%= acesso.estudante.matricula %></td>
+            <td class="acesso__data"><%= data_hora.strftime("%d/%m/%Y") %></td>
+            <td class="acesso__hora"><%= data_hora.strftime("%H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</section>
