@@ -44,6 +44,9 @@ Rails.application.routes.draw do
 
     # Gestão de restaurantes pelo administrador (features/gerencia_restaurantes.feature)
     resources :restaurantes, except: :show
+
+    # Gestão de catracas pelo administrador (features/gerencia_catracas.feature)
+    resources :catracas, except: :show
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)

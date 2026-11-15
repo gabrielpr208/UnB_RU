@@ -1,0 +1,6 @@
+<%= render "cabecalho", titulo: "Nova catraca",
+                        subtitulo: "Cadastre uma catraca física para que os funcionários possam selecioná-la." %>
+
+<section class="cartao cartao--estreito" aria-label="Nova catraca">
+  <%= render "formulario", catraca: @catraca, restaurantes: @restaurantes, botao: "Cadastrar catraca" %>
+</section>

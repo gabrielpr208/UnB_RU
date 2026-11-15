@@ -16,8 +16,15 @@ RSpec.describe Catraca, type: :model do
     expect(nova_catraca).to be_valid
   end
 
-  it "exige o restaurante" do
-    expect(nova_catraca(restaurante: nil)).not_to be_valid
+  it "exige o restaurante, pedindo que ele seja selecionado" do
+    catraca = nova_catraca(restaurante: nil)
+
+    expect(catraca).not_to be_valid
+    expect(catraca.errors[:restaurante]).to eq([ "Selecione um restaurante" ])
+  end
+
+  it "tira espaços em volta do identificador" do
+    expect(nova_catraca(" 01 ").identificador).to eq("01")
   end
 
   it "exige o identificador" do
@@ -39,5 +46,49 @@ RSpec.describe Catraca, type: :model do
 
     expect(erros_do_identificador(nova_catraca)).to eq([ "Já existe uma catraca com este identificador neste restaurante" ])
     expect(nova_catraca(restaurante: outro)).to be_valid
+  end
+
+  describe "em uso e remoção" do
+    let!(:catraca) { nova_catraca.tap(&:save!) }
+    let(:funcionario) { criar_funcionario }
+
+    it "fica em uso enquanto há um ponto de acesso em aberto nela" do
+      expect(catraca).not_to be_em_uso
+
+      PontoAcesso.abrir!(funcionario:, catraca:)
+      expect(catraca).to be_em_uso
+      expect(catraca.ponto_acesso_atual.funcionario).to eq(funcionario)
+
+      funcionario.encerrar_ponto_acesso
+      expect(catraca).not_to be_em_uso
+      expect(catraca.reload.ponto_acesso_atual).to be_nil
+    end
+
+    it "remove a catraca livre, junto com os pontos de acesso já encerrados" do
+      PontoAcesso.abrir!(funcionario:, catraca:)
+      funcionario.encerrar_ponto_acesso
+
+      expect(catraca.remover).to be_truthy
+      expect(described_class.exists?(catraca.id)).to be(false)
+      expect(PontoAcesso.where(catraca_id: catraca.id)).to be_empty
+    end
+
+    it "não remove a catraca em uso e explica o motivo" do
+      PontoAcesso.abrir!(funcionario:, catraca:)
+
+      expect(catraca.remover).to be(false)
+      expect(catraca.errors[:base]).to eq([ "Não é possível remover uma catraca em uso" ])
+      expect(described_class.exists?(catraca.id)).to be(true)
+    end
+  end
+
+  it "lista por nome do restaurante e depois por identificador" do
+    gama = Restaurante.create!(nome: "RU Gama", campus: "Gama")
+    gama.catracas.create!(identificador: "01")
+    restaurante.catracas.create!(identificador: "02")
+    restaurante.catracas.create!(identificador: "01")
+
+    expect(described_class.em_ordem.map { |c| [ c.restaurante.nome, c.identificador ] })
+      .to eq([ [ "RU Darcy Ribeiro", "01" ], [ "RU Darcy Ribeiro", "02" ], [ "RU Gama", "01" ] ])
   end
 end
