@@ -57,6 +57,14 @@ class RelatorioAcessos
     end
   end
 
+  # Total de acessos de cada restaurante, inclusive os que não têm nenhum, do mais movimentado para o menos
+  # movimentado. Ignora os filtros: é o resumo do Relatório Global de Operação (features/pdf_relatorio.feature).
+  def totais_por_restaurante
+    Restaurante.left_joins(catracas: :acessos).group(:id, :nome).count("acessos.id")
+               .map { |(_id, nome), total| [ nome, total ] }
+               .sort_by { |nome, total| [ -total, nome ] }
+  end
+
   private
 
   def filtrados
