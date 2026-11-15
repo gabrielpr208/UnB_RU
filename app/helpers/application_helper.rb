@@ -28,6 +28,7 @@ module ApplicationHelper
              '<path d="M9 8h6"/><path d="M9 12h6"/>',
     filtro: '<path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/>',
     limpar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    baixar: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
     editar: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
     remover: '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/>' \
              '<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',

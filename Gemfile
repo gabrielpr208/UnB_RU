@@ -23,6 +23,10 @@ gem "bcrypt", "~> 3.1.7"
 # Gera o QR Code da recarga via PIX (fictícia) [https://github.com/whomwah/rqrcode]
 gem "rqrcode", "~> 3.2"
 
+# Gera os PDFs exportados (extrato do estudante e relatório de operação) [https://github.com/prawnpdf/prawn]
+gem "prawn", "~> 2.5"
+gem "prawn-table", "~> 0.2.2"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
@@ -63,4 +67,7 @@ group :test do
   gem "cucumber-rails", require: false
   gem "capybara"
   gem "database_cleaner-active_record"
+
+  # Lê o texto dos PDFs gerados nos testes [https://github.com/yob/pdf-reader]
+  gem "pdf-reader", "~> 2.12"
 end

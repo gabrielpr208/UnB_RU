@@ -110,5 +110,18 @@
         </dl>
       </section>
     <% end %>
+
+    <% if @extrato.errors.none? %>
+      <section class="cartao" aria-labelledby="titulo-exportar">
+        <h2 class="cartao__titulo" id="titulo-exportar">Exportar</h2>
+        <p class="cartao__descricao">
+          <%= @extrato.filtrado? ? "Baixe em PDF as movimentações filtradas" : "Baixe em PDF todas as suas movimentações" %>
+        </p>
+        <%= link_to extrato_pdf_path(request.query_parameters.slice(*%w[ tipo data_inicial data_final valor_minimo valor_maximo ])),
+                    class: "botao botao--secundario botao--bloco", data: { turbo: false } do %>
+          <%= icone :baixar %> Exportar PDF
+        <% end %>
+      </section>
+    <% end %>
   </aside>
 </div>
