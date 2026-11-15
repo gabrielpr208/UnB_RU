@@ -2,9 +2,9 @@ module AutenticacaoFuncionarioSteps
   # Rótulos dos campos do formulário para as chaves da tabela "eu faço login com os seguintes dados:".
   CAMPOS_DO_LOGIN = { "SIAPE" => "SIAPE", "senha" => "Senha" }.freeze
 
-  def criar_funcionario_com_login(siape:, senha:, nome: "José Pereira")
+  def criar_funcionario_com_login(siape:, senha:, nome: "José Pereira", administrador: false)
     usuario = Usuario.create!(nome:, email: "#{siape}@unb.br", senha:)
-    Funcionario.create!(usuario:, siape:)
+    Funcionario.create!(usuario:, siape:, administrador:)
   end
 
   def fazer_login_de_funcionario(dados)
@@ -22,6 +22,15 @@ end
 
 Dado("que (eu )estou logado como funcionário") do
   @funcionario ||= criar_funcionario_com_login(siape: "1234567", senha: AutenticacaoSteps::SENHA_PADRAO)
+  @senha_do_funcionario ||= AutenticacaoSteps::SENHA_PADRAO
+
+  fazer_login_de_funcionario("SIAPE" => @funcionario.siape, "senha" => @senha_do_funcionario)
+  page.assert_current_path(controle_path)
+end
+
+Dado("que (eu )estou logado como administrador") do
+  @funcionario ||= criar_funcionario_com_login(siape: "7654321", senha: AutenticacaoSteps::SENHA_PADRAO,
+                                               nome: "Ana Lima", administrador: true)
   @senha_do_funcionario ||= AutenticacaoSteps::SENHA_PADRAO
 
   fazer_login_de_funcionario("SIAPE" => @funcionario.siape, "senha" => @senha_do_funcionario)

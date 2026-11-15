@@ -54,6 +54,16 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(link["class"]).to eq("abas__item")
     end
 
+    it "com exata: true, marca só a própria página e não as de baixo" do
+      helper.request.path = "/controle/restaurantes"
+      abaixo = Nokogiri::HTML5.fragment(helper.link_de_aba("Início", "/controle", exata: true)).at("a")
+      expect(abaixo["class"]).to eq("abas__item")
+
+      helper.request.path = "/controle"
+      propria = Nokogiri::HTML5.fragment(helper.link_de_aba("Início", "/controle", exata: true)).at("a")
+      expect(propria["class"]).to include("abas__item--ativa")
+    end
+
     it "não marca as outras abas" do
       link = aba("/login")
 

@@ -27,7 +27,11 @@ module ApplicationHelper
     extrato: '<path d="M6 3h12a1 1 0 0 1 1 1v17l-3-2-2 2-2-2-2 2-2-2-3 2V4a1 1 0 0 1 1-1z"/>' \
              '<path d="M9 8h6"/><path d="M9 12h6"/>',
     filtro: '<path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/>',
-    limpar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+    limpar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    editar: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    remover: '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/>' \
+             '<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
+    local: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'
   }.freeze
 
   def icone(nome, classe: nil)
@@ -64,8 +68,9 @@ module ApplicationHelper
   end
 
   # Marca a aba da página atual e também das páginas abaixo dela (ex.: /recarga e /recarga/pix/1).
-  def link_de_aba(texto, caminho)
-    ativa = request.path == caminho || request.path.start_with?("#{caminho}/")
+  # Com `exata: true`, só a própria página (ex.: Início em /controle não fica ativa em /controle/restaurantes).
+  def link_de_aba(texto, caminho, exata: false)
+    ativa = request.path == caminho || (!exata && request.path.start_with?("#{caminho}/"))
     link_to texto, caminho, class: [ "abas__item", ("abas__item--ativa" if ativa) ],
                             aria: { current: ("page" if ativa) }
   end
