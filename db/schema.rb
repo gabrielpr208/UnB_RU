@@ -19,7 +19,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_130100) do
     t.datetime "updated_at", null: false
     t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
     t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
+  end
+
   create_table "cardapios", force: :cascade do |t|
     t.date "data", null: false
     t.string "refeicao", null: false
@@ -52,6 +53,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["siape"], name: "index_funcionarios_on_siape", unique: true
+  end
+
   create_table "itens_cardapio", force: :cascade do |t|
     t.integer "cardapio_id", null: false
     t.string "categoria", null: false

@@ -1008,6 +1008,8 @@ fieldset.segmentos {
 .vazio__texto {
   color: var(--cor-texto-suave);
   font-size: 13px;
+}
+
 .lista-dados .lista-dados__indisponivel {
   color: var(--cor-texto-suave);
   font-weight: 400;
