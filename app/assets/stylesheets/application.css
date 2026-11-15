@@ -411,7 +411,10 @@ a:hover {
   font: inherit;
   font-size: 14px;
   font-weight: 600;
-  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .campo__entrada::placeholder {
@@ -1242,4 +1245,30 @@ fieldset.segmentos {
 .botao--bloco {
   width: 100%;
   margin-top: 12px;
+}
+
+/* Indicador de estado da catraca na validação de entrada */
+.catraca {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.catraca .icone {
+  width: 16px;
+  height: 16px;
+}
+
+.catraca--liberada {
+  background: var(--cor-destaque-clara);
+  color: var(--cor-destaque-escura);
+}
+
+.catraca--bloqueada {
+  background: var(--cor-erro-clara);
+  color: var(--cor-erro);
 }
