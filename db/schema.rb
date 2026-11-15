@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120100) do
+  create_table "cardapios", force: :cascade do |t|
+    t.date "data", null: false
+    t.string "refeicao", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data", "refeicao"], name: "index_cardapios_on_data_and_refeicao", unique: true
+    t.check_constraint "refeicao IN ('cafe_da_manha', 'almoco', 'jantar')", name: "refeicao_valida"
+  end
+
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
     t.string "matricula", limit: 9, null: false
     t.decimal "saldo", precision: 10, scale: 2, default: "0.0", null: false
@@ -18,6 +27,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
     t.datetime "updated_at", null: false
     t.index ["matricula"], name: "index_estudantes_on_matricula", unique: true
     t.check_constraint "saldo >= 0", name: "saldo_nao_negativo"
+  end
+
+  create_table "itens_cardapio", force: :cascade do |t|
+    t.integer "cardapio_id", null: false
+    t.string "categoria", null: false
+    t.string "variante"
+    t.string "descricao", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cardapio_id"], name: "index_itens_cardapio_on_cardapio_id"
+    t.check_constraint "variante IS NULL OR variante IN ('padrao', 'ovolactovegetariano', 'vegetariano_estrito')", name: "variante_valida"
   end
 
   create_table "recargas", force: :cascade do |t|
@@ -57,6 +77,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_140000) do
   end
 
   add_foreign_key "estudantes", "usuarios"
+  add_foreign_key "itens_cardapio", "cardapios"
   add_foreign_key "recargas", "estudantes", primary_key: "usuario_id"
   add_foreign_key "sessoes", "usuarios"
 end
