@@ -17,9 +17,10 @@ Rails.application.routes.draw do
   # Página inicial do estudante logado
   root "inicio#show"
 
-  # Recarga de saldo fictícia via PIX ou cartão (features/recarga_saldo.feature)
+  # Cardápio da refeição atual (features/cardapio_refeicao_atual.feature)
   get "cardapio", to: "cardapios#show", as: :cardapio
 
+  # Recarga de saldo fictícia via PIX ou cartão (features/recarga_saldo.feature)
   get  "recarga",                  to: "recargas#new",          as: :nova_recarga
   post "recarga/pix",              to: "recargas#gerar_pix",    as: :gerar_pix
   get  "recarga/pix/:id",          to: "recargas#pix",          as: :recarga_pix
