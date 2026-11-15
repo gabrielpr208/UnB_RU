@@ -12,7 +12,12 @@ module Controle
     def exigir_administrador
       return if Current.usuario.funcionario.administrador?
 
-      redirect_to controle_path, alert: "Acesso permitido apenas para administradores"
+      redirect_to controle_path, alert: mensagem_para_quem_nao_e_administrador
+    end
+
+    # Cada controller pode trocar a mensagem (ex.: o PDF do relatório de operação).
+    def mensagem_para_quem_nao_e_administrador
+      "Acesso permitido apenas para administradores"
     end
 
     def autorizado?

@@ -56,6 +56,8 @@ Rails.application.routes.draw do
 
     # Histórico de todos os acessos, para o administrador (features/relatorio_global.feature)
     get "relatorio", to: "relatorios#show", as: :relatorio
+    # Relatório Global de Operação em PDF (features/pdf_relatorio.feature)
+    get "relatorio/pdf", to: "relatorios#pdf", as: :relatorio_pdf
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
