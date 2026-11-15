@@ -10,6 +10,9 @@
   </div>
   <h1 class="titulo-pagina">Histórico de acessos</h1>
   <p class="subtitulo-pagina">Todos os acessos registrados nos restaurantes, do mais recente para o mais antigo.</p>
+  <%= link_to controle_relatorio_pdf_path, class: "botao botao--secundario botao--pequeno", data: { turbo: false } do %>
+    <%= icone :baixar %> Exportar relatório global (PDF)
+  <% end %>
 </div>
 
 <section class="cartao" aria-labelledby="titulo-acessos">
