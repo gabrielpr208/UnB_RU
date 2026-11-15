@@ -80,7 +80,16 @@ RSpec.describe Catraca, type: :model do
       expect(catraca.errors[:base]).to eq([ "Não é possível remover uma catraca em uso" ])
       expect(described_class.exists?(catraca.id)).to be(true)
     end
+
+    it "não remove a catraca com histórico e explica o motivo" do
+      catraca.acessos.create!(estudante: criar_estudante, data_hora: Time.current, valor_cobrado: 4.50)
+
+      expect(catraca.remover).to be(false)
+      expect(catraca.errors[:base]).to eq([ "Não é possível remover uma catraca com acessos registrados" ])
+      expect(described_class.exists?(catraca.id)).to be(true)
+    end
   end
+
 
   it "lista por nome do restaurante e depois por identificador" do
     gama = Restaurante.create!(nome: "RU Gama", campus: "Gama")

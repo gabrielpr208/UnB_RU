@@ -19,10 +19,11 @@ module ExtratoSteps
   def registrar_movimentacao(estudante, tipo:, valor:, data_hora:)
     valor = ValorMonetario.new.cast(valor.delete_prefix("-"))
     quando = Time.zone.strptime(data_hora, "%d/%m/%Y %H:%M")
+    catraca = restaurante_chamado("RU Darcy Ribeiro").catracas.find_or_create_by!(identificador: "01")
 
     case tipo
     when "recarga" then estudante.recargas.create!(metodo: :cartao, status: :confirmada, valor:, confirmada_em: quando)
-    when "refeição" then estudante.acessos.create!(valor_cobrado: valor, data_hora: quando)
+    when "refeição" then estudante.acessos.create!(valor_cobrado: valor, data_hora: quando, catraca:)
     else raise ArgumentError, "Tipo de movimentação desconhecido: #{tipo}"
     end
   end
