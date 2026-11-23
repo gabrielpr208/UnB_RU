@@ -1,5 +1,3 @@
-# Formulário da recarga via cartão de crédito. Os dados do cartão são fictícios: passam por uma
-# conferência simples e não são guardados. Com dados válidos, o saldo é creditado na hora.
 class PagamentoCartao
   include ActiveModel::Model
   include ActiveModel::Attributes
@@ -40,13 +38,16 @@ class PagamentoCartao
   end
 
   def validar_cartao
-    em_branco = CAMPOS_DO_CARTAO.select { |campo| public_send(campo).blank? }
-    errors.add(:base, "Preencha todos os dados do cartão") if em_branco.any?
-    em_branco.each { |campo| errors.add(campo, "Campo obrigatório") }
-
+    validar_preenchimento
     validar_numero if numero_cartao.present?
     validar_validade if validade.present?
     validar_cvv if cvv.present?
+  end
+
+  def validar_preenchimento
+    em_branco = CAMPOS_DO_CARTAO.select { |campo| public_send(campo).blank? }
+    errors.add(:base, "Preencha todos os dados do cartão") if em_branco.any?
+    em_branco.each { |campo| errors.add(campo, "Campo obrigatório") }
   end
 
   def validar_numero
@@ -59,18 +60,21 @@ class PagamentoCartao
     errors.add(:cvv, "CVV inválido") unless cvv.strip.match?(/\A\d{3}\z/)
   end
 
-  # O cartão vale até o último dia do mês da validade.
   def validar_validade
-    mes, ano = validade.strip.match(VALIDADE)&.captures&.map(&:to_i)
+    fim = fim_da_validade
 
-    if mes.nil? || !(1..12).cover?(mes)
+    if fim.nil?
       errors.add(:validade, "Validade inválida. Use o formato MM/AAAA")
-    elsif Date.new(ano_completo(ano), mes).end_of_month < Date.current
+    elsif fim < Date.current
       errors.add(:validade, "Cartão vencido")
     end
   end
 
-  # Aceita o ano com 2 dígitos: "12/30" vale até dezembro de 2030.
+  def fim_da_validade
+    mes, ano = validade.strip.match(VALIDADE)&.captures&.map(&:to_i)
+    Date.new(ano_completo(ano), mes).end_of_month if (1..12).cover?(mes)
+  end
+
   def ano_completo(ano)
     ano < 100 ? 2000 + ano : ano
   end
