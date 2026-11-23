@@ -51,8 +51,8 @@ Rails.application.routes.draw do
     # Gestão de catracas pelo administrador (features/gerencia_catracas.feature)
     resources :catracas, except: :show
 
-    # Cadastro de funcionários pelo administrador (features/cadastro_funcionario.feature)
-    resources :funcionarios, only: %i[ index new create ]
+    # Gestão de funcionários pelo administrador (features/cadastro_funcionario.feature e gerencia_funcionarios.feature)
+    resources :funcionarios, except: :show
 
     get "entrada", to: "entradas#new", as: :entrada
     post "entrada", to: "entradas#create"
