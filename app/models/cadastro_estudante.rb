@@ -7,6 +7,10 @@ class CadastroEstudante
   private
 
   def nova_especializacao
-    Estudante.new(usuario:, matricula:)
+    Estudante.new
+  end
+
+  def dados_da_especializacao
+    { matricula: }
   end
 end
