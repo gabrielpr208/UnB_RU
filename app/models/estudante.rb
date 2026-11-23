@@ -20,8 +20,15 @@ class Estudante < ApplicationRecord
     autenticar_por(matricula:, senha:)
   end
 
-  # Soma direto no banco (saldo = saldo + valor), sem perder créditos de pagamentos simultâneos.
   def creditar!(valor)
     increment!(:saldo, valor, touch: true)
+  end
+
+  def debitar(valor)
+    with_lock do
+      next false if saldo < valor
+
+      update!(saldo: saldo - valor)
+    end
   end
 end
