@@ -162,6 +162,20 @@ RSpec.describe CadastroFuncionario, type: :model do
       expect(Funcionario.autenticar(siape: "1234567", senha: "nova1234")).to eq(jose)
     end
 
+    {
+      { senha: "", confirmacao_senha: "nova1234" } => [ :confirmacao_senha, "A confirmação de senha não confere" ],
+      { senha: "nova1234", confirmacao_senha: "" } => [ :confirmacao_senha, "A confirmação de senha não confere" ],
+      { senha: "12345", confirmacao_senha: "12345" } => [ :senha, "A senha deve ter no mínimo 6 caracteres" ]
+    }.each do |alteracoes, (campo, mensagem)|
+      it "com #{alteracoes}, informa \"#{mensagem}\" e mantém a senha atual" do
+        cadastro = edicao(jose, **alteracoes)
+
+        expect(cadastro.save).to be(false)
+        expect(cadastro.errors[campo]).to eq([ mensagem ])
+        expect(Funcionario.autenticar(siape: "1234567", senha: "senha123")).to eq(jose)
+      end
+    end
+
     it "não altera o registro recebido quando a gravação falha" do
       cadastro = edicao(jose, nome: "", siape: "7654321")
 
