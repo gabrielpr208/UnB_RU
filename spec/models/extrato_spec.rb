@@ -198,6 +198,23 @@ RSpec.describe Extrato, type: :model do
       expect(extrato(valor_minimo: "4,50", valor_maximo: "4,50")).to be_valid
     end
 
+    {
+      { valor_minimo: "abc", valor_maximo: "10" } => { valor_minimo: [ "Informe um valor numérico válido" ] },
+      { valor_minimo: "10", valor_maximo: "abc" } => { valor_maximo: [ "Informe um valor numérico válido" ] },
+      { valor_minimo: "20,00", valor_maximo: "5,00" } => {
+        valor_maximo: [ "O valor máximo não pode ser menor que o valor mínimo" ]
+      },
+      { valor_minimo: "20" } => {},
+      { valor_maximo: "5" } => {}
+    }.each do |filtros, erros|
+      it "com #{filtros}, acusa exatamente #{erros}" do
+        filtro = extrato(**filtros)
+        filtro.validate
+
+        expect(filtro.errors.to_hash).to eq(erros)
+      end
+    end
+
     %w[ abc -5 4,555 ].each do |texto|
       it "recusa o valor #{texto.inspect}" do
         filtro = extrato(valor_minimo: texto, valor_maximo: texto)
