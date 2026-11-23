@@ -29,6 +29,7 @@ RSpec.describe ConfiguracaoPontoAcesso, type: :model do
     { restaurante: "" } => [ :restaurante, "Informe o restaurante" ],
     { restaurante: "RU Inexistente" } => [ :restaurante, "Restaurante não encontrado" ],
     { numero_da_catraca: "" } => [ :numero_da_catraca, "Informe o número da catraca" ],
+    { numero_da_catraca: "   " } => [ :numero_da_catraca, "Informe o número da catraca" ],
     { numero_da_catraca: "123" } => [ :numero_da_catraca, "O número da catraca deve ter 2 dígitos" ],
     { numero_da_catraca: "1" } => [ :numero_da_catraca, "O número da catraca deve ter 2 dígitos" ],
     { numero_da_catraca: "AB" } => [ :numero_da_catraca, "O número da catraca deve ter 2 dígitos" ],
