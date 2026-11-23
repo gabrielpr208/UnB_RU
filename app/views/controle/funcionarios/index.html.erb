@@ -1,0 +1,36 @@
+<%= render "cabecalho", titulo: "Funcionários",
+                        subtitulo: "Funcionários que entram na Aplicação de Controle com o SIAPE e a senha." %>
+
+<section class="cartao" aria-labelledby="titulo-funcionarios">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-funcionarios">Funcionários cadastrados</h2>
+    <%= link_to new_controle_funcionario_path, class: "botao botao--primario botao--pequeno" do %>
+      <%= icone :adicionar %> Novo funcionário
+    <% end %>
+  </header>
+
+  <table class="tabela" id="funcionarios">
+    <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">SIAPE</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Perfil</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @funcionarios.each do |funcionario| %>
+        <tr>
+          <td class="tabela__destaque"><%= funcionario.nome %></td>
+          <td><%= funcionario.siape %></td>
+          <td class="tabela__quebravel"><%= funcionario.email %></td>
+          <td>
+            <span class="selo<%= " selo--primario" if funcionario.administrador? %>">
+              <%= papel_do_funcionario(funcionario) %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
