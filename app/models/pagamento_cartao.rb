@@ -65,8 +65,13 @@ class PagamentoCartao
 
     if mes.nil? || !(1..12).cover?(mes)
       errors.add(:validade, "Validade inválida. Use o formato MM/AAAA")
-    elsif Date.new(ano < 100 ? 2000 + ano : ano, mes).end_of_month < Date.current
+    elsif Date.new(ano_completo(ano), mes).end_of_month < Date.current
       errors.add(:validade, "Cartão vencido")
     end
+  end
+
+  # Aceita o ano com 2 dígitos: "12/30" vale até dezembro de 2030.
+  def ano_completo(ano)
+    ano < 100 ? 2000 + ano : ano
   end
 end
