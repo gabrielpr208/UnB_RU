@@ -45,6 +45,15 @@ class Extrato
     tipo != "todos" || [ data_inicial, data_final, valor_minimo, valor_maximo ].any?(&:present?)
   end
 
+  # Valores da faixa já convertidos (nil quando em branco ou inválidos).
+  def minimo
+    ValorMonetario.new.cast(valor_minimo)
+  end
+
+  def maximo
+    ValorMonetario.new.cast(valor_maximo)
+  end
+
   private
 
   def recargas
@@ -70,14 +79,6 @@ class Extrato
     end
     relacao = relacao.where(coluna_do_valor => minimo..maximo) if minimo || maximo
     relacao
-  end
-
-  def minimo
-    ValorMonetario.new.cast(valor_minimo)
-  end
-
-  def maximo
-    ValorMonetario.new.cast(valor_maximo)
   end
 
   def validar_periodo
