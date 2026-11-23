@@ -18,6 +18,8 @@ class Funcionario < ApplicationRecord
                     if: -> { siape.to_s.match?(/\A\d+\z/) }
   validates :siape, uniqueness: { message: "Este SIAPE já está cadastrado" }, allow_blank: true
 
+  scope :em_ordem, -> { joins(:usuario).order("usuarios.nome", :siape) }
+
   def self.autenticar(siape:, senha:)
     autenticar_por(siape:, senha:)
   end

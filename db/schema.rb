@@ -18,8 +18,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "catraca_id", null: false
-    t.index [ "catraca_id" ], name: "index_acessos_on_catraca_id"
-    t.index [ "estudante_id", "data_hora" ], name: "index_acessos_on_estudante_id_and_data_hora"
+    t.index ["catraca_id"], name: "index_acessos_on_catraca_id"
+    t.index ["estudante_id", "data_hora"], name: "index_acessos_on_estudante_id_and_data_hora"
     t.check_constraint "valor_cobrado > 0", name: "valor_cobrado_positivo"
   end
 
@@ -28,7 +28,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "refeicao", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "data", "refeicao" ], name: "index_cardapios_on_data_and_refeicao", unique: true
+    t.index ["data", "refeicao"], name: "index_cardapios_on_data_and_refeicao", unique: true
     t.check_constraint "refeicao IN ('cafe_da_manha', 'almoco', 'jantar')", name: "refeicao_valida"
   end
 
@@ -37,7 +37,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "identificador", limit: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "restaurante_id", "identificador" ], name: "index_catracas_on_restaurante_id_and_identificador", unique: true
+    t.index ["restaurante_id", "identificador"], name: "index_catracas_on_restaurante_id_and_identificador", unique: true
   end
 
   create_table "estudantes", primary_key: "usuario_id", force: :cascade do |t|
@@ -45,7 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.decimal "saldo", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "matricula" ], name: "index_estudantes_on_matricula", unique: true
+    t.index ["matricula"], name: "index_estudantes_on_matricula", unique: true
     t.check_constraint "saldo >= 0", name: "saldo_nao_negativo"
   end
 
@@ -54,7 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.boolean "administrador", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "siape" ], name: "index_funcionarios_on_siape", unique: true
+    t.index ["siape"], name: "index_funcionarios_on_siape", unique: true
   end
 
   create_table "itens_cardapio", force: :cascade do |t|
@@ -64,7 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "descricao", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "cardapio_id" ], name: "index_itens_cardapio_on_cardapio_id"
+    t.index ["cardapio_id"], name: "index_itens_cardapio_on_cardapio_id"
     t.check_constraint "variante IS NULL OR variante IN ('padrao', 'ovolactovegetariano', 'vegetariano_estrito')", name: "variante_valida"
   end
 
@@ -75,10 +75,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.datetime "encerrado_em"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "catraca_id" ], name: "index_pontos_acesso_em_aberto_por_catraca", unique: true, where: "encerrado_em IS NULL"
-    t.index [ "catraca_id" ], name: "index_pontos_acesso_on_catraca_id"
-    t.index [ "funcionario_id" ], name: "index_pontos_acesso_em_aberto_por_funcionario", unique: true, where: "encerrado_em IS NULL"
-    t.index [ "funcionario_id" ], name: "index_pontos_acesso_on_funcionario_id"
+    t.index ["catraca_id"], name: "index_pontos_acesso_em_aberto_por_catraca", unique: true, where: "encerrado_em IS NULL"
+    t.index ["catraca_id"], name: "index_pontos_acesso_on_catraca_id"
+    t.index ["funcionario_id"], name: "index_pontos_acesso_em_aberto_por_funcionario", unique: true, where: "encerrado_em IS NULL"
+    t.index ["funcionario_id"], name: "index_pontos_acesso_on_funcionario_id"
     t.check_constraint "encerrado_em IS NULL OR encerrado_em >= iniciado_em", name: "encerrado_depois_de_iniciado"
   end
 
@@ -87,7 +87,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.decimal "valor", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "refeicao" ], name: "index_precos_refeicao_on_refeicao", unique: true
+    t.index ["refeicao"], name: "index_precos_refeicao_on_refeicao", unique: true
     t.check_constraint "valor > 0", name: "preco_positivo"
   end
 
@@ -101,8 +101,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.datetime "confirmada_em"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "codigo_pix" ], name: "index_recargas_on_codigo_pix", unique: true
-    t.index [ "estudante_id" ], name: "index_recargas_on_estudante_id"
+    t.index ["codigo_pix"], name: "index_recargas_on_codigo_pix", unique: true
+    t.index ["estudante_id"], name: "index_recargas_on_estudante_id"
     t.check_constraint "metodo = 'cartao' OR (codigo_pix IS NOT NULL AND expira_em IS NOT NULL)", name: "pix_com_codigo_e_prazo"
     t.check_constraint "metodo IN ('pix', 'cartao')", name: "metodo_valido"
     t.check_constraint "status IN ('pendente', 'confirmada', 'expirada')", name: "status_valido"
@@ -114,7 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "campus", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "nome" ], name: "index_restaurantes_on_nome", unique: true
+    t.index ["nome"], name: "index_restaurantes_on_nome", unique: true
     t.check_constraint "campus IN ('Darcy Ribeiro', 'Gama', 'Ceilândia', 'Planaltina')", name: "campus_valido"
   end
 
@@ -124,7 +124,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "usuario_id" ], name: "index_sessoes_on_usuario_id"
+    t.index ["usuario_id"], name: "index_sessoes_on_usuario_id"
   end
 
   create_table "usuarios", force: :cascade do |t|
@@ -133,7 +133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_192335) do
     t.string "senha_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index [ "email" ], name: "index_usuarios_on_email", unique: true
+    t.index ["email"], name: "index_usuarios_on_email", unique: true
   end
 
   add_foreign_key "acessos", "catracas"
