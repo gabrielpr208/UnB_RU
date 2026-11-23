@@ -1,14 +1,20 @@
 require "rails_helper"
 
-RSpec.describe "Cadastro de funcionários", type: :request do
+RSpec.describe "Gestão de funcionários", type: :request do
   let!(:administrador) { criar_funcionario(siape: "7654321", email: "admin@unb.br", administrador: true) }
 
   def html
     Nokogiri::HTML5(response.body)
   end
 
-  def siapes_na_lista
-    html.css("#funcionarios tbody tr td:nth-child(2)").map { |celula| celula.text.strip }
+  # Nome, SIAPE, e-mail e perfil de cada linha da lista.
+  def linhas_da_lista
+    html.css("#funcionarios tbody tr").map { |linha| linha.css("td").first(4).map { |celula| celula.text.squish } }
+  end
+
+  def acoes_da_linha(siape)
+    linha = html.css("#funcionarios tbody tr").find { |tr| tr.css("td")[1].text.strip == siape }
+    linha.css(".tabela__acoes a, .tabela__acoes button").map { |acao| acao.text.squish }
   end
 
   def erro_do_campo(atributo)
@@ -35,7 +41,7 @@ RSpec.describe "Cadastro de funcionários", type: :request do
       expect(flash[:alert]).to eq("Acesso por estudantes não autorizado")
     end
 
-    it "não deixa funcionário que não é administrador ver a lista nem cadastrar" do
+    it "não deixa funcionário que não é administrador ver, cadastrar, editar nem remover" do
       entrar_como_funcionario(criar_funcionario(siape: "1234567"))
 
       get controle_funcionarios_path
@@ -45,6 +51,12 @@ RSpec.describe "Cadastro de funcionários", type: :request do
       expect { post controle_funcionarios_path, params: { cadastro_funcionario: dados_validos(administrador: "true") } }
         .not_to change(Funcionario, :count)
       expect(response).to redirect_to(controle_path)
+
+      patch controle_funcionario_path(administrador), params: { cadastro_funcionario: { administrador: "false" } }
+      expect(administrador.reload).to be_administrador
+
+      expect { delete controle_funcionario_path(administrador) }.not_to change(Funcionario, :count)
+      expect(response).to redirect_to(controle_path)
     end
   end
 
@@ -52,18 +64,26 @@ RSpec.describe "Cadastro de funcionários", type: :request do
     before { entrar_como_funcionario(administrador) }
 
     describe "lista" do
-      it "mostra os funcionários em ordem de nome, com SIAPE, e-mail e perfil" do
+      it "mostra os funcionários em ordem de nome, com SIAPE, e-mail e perfil, e marca o próprio administrador" do
         usuario = Usuario.create!(nome: "Bruno Alves", email: "bruno@unb.br", senha: "senha123")
         Funcionario.create!(usuario:, siape: "2223334")
 
         get controle_funcionarios_path
 
         expect(response).to have_http_status(:ok)
-        expect(html.css("#funcionarios tbody tr td:first-child").map(&:text)).to eq([ "Bruno Alves", "Funcionário Existente" ])
-        expect(html.css("#funcionarios tbody tr").map { |linha| linha.css("td").map { |c| c.text.strip } }).to eq([
+        expect(linhas_da_lista).to eq([
           [ "Bruno Alves", "2223334", "bruno@unb.br", "Funcionário" ],
-          [ "Funcionário Existente", "7654321", "admin@unb.br", "Administrador" ]
+          [ "Funcionário Existente Você", "7654321", "admin@unb.br", "Administrador" ]
         ])
+      end
+
+      it "deixa editar todos, mas não mostra Remover na linha do próprio administrador" do
+        criar_funcionario(siape: "1234567", email: "jose@unb.br")
+
+        get controle_funcionarios_path
+
+        expect(acoes_da_linha("1234567")).to eq([ "Editar", "Remover" ])
+        expect(acoes_da_linha("7654321")).to eq([ "Editar" ])
       end
 
       it "marca a aba Funcionários como ativa" do
@@ -73,7 +93,7 @@ RSpec.describe "Cadastro de funcionários", type: :request do
       end
     end
 
-    describe "formulário" do
+    describe "formulário de cadastro" do
       it "mostra os campos, com o perfil Funcionário marcado" do
         get new_controle_funcionario_path
 
@@ -117,6 +137,7 @@ RSpec.describe "Cadastro de funcionários", type: :request do
         { siape: "7654321" } => [ :siape, "Este SIAPE já está cadastrado" ],
         { email: "admin@unb.br" } => [ :email, "Este e-mail já está cadastrado" ],
         { nome: "" } => [ :nome, "O nome é obrigatório" ],
+        { senha: "", confirmacao_senha: "" } => [ :senha, "A senha é obrigatória" ],
         { confirmacao_senha: "outra456" } => [ :confirmacao_senha, "A confirmação de senha não confere" ]
       }.each do |alteracao, (atributo, mensagem)|
         it "com #{alteracao.inspect}, não cadastra e mostra \"#{mensagem}\" no campo" do
@@ -132,6 +153,147 @@ RSpec.describe "Cadastro de funcionários", type: :request do
         post controle_funcionarios_path, params: { cadastro_funcionario: dados_validos(nome: "", administrador: "true") }
 
         expect(html.at("input#cadastro_funcionario_administrador_true")["checked"]).to be_present
+      end
+    end
+
+    describe "edição" do
+      let!(:jose) { criar_funcionario(siape: "1234567", email: "jose@unb.br") }
+
+      def editar(funcionario, **dados)
+        patch controle_funcionario_path(funcionario),
+              params: { cadastro_funcionario: { senha: "", confirmacao_senha: "" }.merge(dados) }
+      end
+
+      it "mostra o formulário preenchido, com a senha em branco" do
+        get edit_controle_funcionario_path(jose)
+
+        expect(response).to have_http_status(:ok)
+        expect(html.at("input#cadastro_funcionario_nome")["value"]).to eq("Funcionário Existente")
+        expect(html.at("input#cadastro_funcionario_siape")["value"]).to eq("1234567")
+        expect(html.at("input#cadastro_funcionario_email")["value"]).to eq("jose@unb.br")
+        expect(html.at("input#cadastro_funcionario_senha")["value"]).to be_nil
+        expect(html.at("input#cadastro_funcionario_administrador_false")["checked"]).to be_present
+        expect(html.at("label[for=cadastro_funcionario_senha]").text).to eq("Nova senha")
+      end
+
+      it "salva nome, SIAPE, e-mail e perfil, mantém a senha e volta para a lista" do
+        editar(jose, nome: "José Pereira", siape: "1234568", email: "jose.pereira@unb.br", administrador: "true")
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(flash[:notice]).to eq("Funcionário atualizado com sucesso")
+        expect(jose.reload).to have_attributes(nome: "José Pereira", siape: "1234568",
+                                               email: "jose.pereira@unb.br", administrador: true)
+        expect(Funcionario.autenticar(siape: "1234568", senha: "senha123")).to eq(jose)
+      end
+
+      it "troca a senha quando uma nova é informada" do
+        editar(jose, senha: "nova1234", confirmacao_senha: "nova1234")
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(Funcionario.autenticar(siape: "1234567", senha: "nova1234")).to eq(jose)
+        expect(Funcionario.autenticar(siape: "1234567", senha: "senha123")).to be_nil
+      end
+
+      it "mantém a senha se o campo nem vier no formulário" do
+        patch controle_funcionario_path(jose), params: { cadastro_funcionario: { nome: "José Pereira" } }
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(Funcionario.autenticar(siape: "1234567", senha: "senha123")).to eq(jose)
+      end
+
+      it "aceita salvar sem mudar nada: o SIAPE e o e-mail do próprio funcionário não contam como repetidos" do
+        editar(jose, nome: "Funcionário Existente", siape: "1234567", email: "jose@unb.br")
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+      end
+
+      {
+        { siape: "7654321" } => [ :siape, "Este SIAPE já está cadastrado" ],
+        { siape: "12A4567" } => [ :siape, "O SIAPE deve conter apenas números" ],
+        { email: "admin@unb.br" } => [ :email, "Este e-mail já está cadastrado" ],
+        { nome: "" } => [ :nome, "O nome é obrigatório" ],
+        { senha: "12345", confirmacao_senha: "12345" } => [ :senha, "A senha deve ter no mínimo 6 caracteres" ],
+        { senha: "nova1234", confirmacao_senha: "outra456" } => [ :confirmacao_senha, "A confirmação de senha não confere" ],
+        { senha: "", confirmacao_senha: "nova1234" } => [ :confirmacao_senha, "A confirmação de senha não confere" ]
+      }.each do |alteracao, (atributo, mensagem)|
+        it "com #{alteracao.inspect}, não salva nada e mostra \"#{mensagem}\" no campo" do
+          editar(jose, administrador: "true", **alteracao)
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(erro_do_campo(atributo)).to eq(mensagem)
+          expect(jose.reload).to have_attributes(nome: "Funcionário Existente", siape: "1234567",
+                                                 email: "jose@unb.br", administrador: false)
+          expect(Funcionario.autenticar(siape: "1234567", senha: "senha123")).to eq(jose)
+        end
+      end
+
+      it "tira o acesso de administrador de outro administrador" do
+        outro = criar_funcionario(siape: "2223334", email: "outro@unb.br", administrador: true)
+
+        editar(outro, administrador: "false")
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(outro.reload).not_to be_administrador
+      end
+
+      it "deixa o administrador alterar os próprios dados" do
+        editar(administrador, nome: "Ana Lima", administrador: "true")
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(administrador.reload.nome).to eq("Ana Lima")
+      end
+
+      it "não deixa o administrador tirar o próprio acesso de administrador" do
+        editar(administrador, administrador: "false")
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(erro_do_campo(:administrador)).to eq("Você não pode tirar o seu próprio acesso de administrador")
+        expect(administrador.reload).to be_administrador
+      end
+
+      it "responde 404 para funcionário inexistente" do
+        get edit_controle_funcionario_path(id: 0)
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    describe "remoção" do
+      let!(:jose) { criar_funcionario(siape: "1234567", email: "jose@unb.br") }
+
+      it "remove o funcionário e a conta de usuário dele, e volta para a lista com a mensagem de sucesso" do
+        expect { delete controle_funcionario_path(jose) }
+          .to change(Funcionario, :count).by(-1)
+          .and change(Usuario, :count).by(-1)
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(response).to have_http_status(:see_other)
+        expect(flash[:notice]).to eq("Funcionário removido com sucesso")
+        expect(Funcionario.autenticar(siape: "1234567", senha: "senha123")).to be_nil
+      end
+
+      it "encerra as sessões do funcionário e libera a catraca que ele operava" do
+        catraca = catraca_padrao
+        PontoAcesso.abrir!(funcionario: jose, catraca:)
+        jose.usuario.sessoes.create!
+
+        delete controle_funcionario_path(jose)
+
+        expect(Sessao.where(usuario_id: jose.usuario_id)).to be_empty
+        expect(catraca.reload).not_to be_em_uso
+      end
+
+      it "não deixa o administrador remover a própria conta" do
+        expect { delete controle_funcionario_path(administrador) }.not_to change(Funcionario, :count)
+
+        expect(response).to redirect_to(controle_funcionarios_path)
+        expect(flash[:alert]).to eq("Você não pode remover a sua própria conta")
+      end
+
+      it "responde 404 para funcionário inexistente" do
+        delete controle_funcionario_path(id: 0)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

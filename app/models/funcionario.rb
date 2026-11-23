@@ -27,4 +27,17 @@ class Funcionario < ApplicationRecord
   def encerrar_ponto_acesso
     pontos_acesso.encerrar
   end
+
+  # Remove o funcionário junto com a conta de usuário dele: as sessões abertas e os pontos de acesso vão junto,
+  # então ele sai da Aplicação de Controle e a catraca que operava fica livre. Os acessos registrados ficam,
+  # porque pertencem à catraca. Ninguém remove a própria conta: assim sempre sobra ao menos um administrador.
+  # Devolve false e deixa o motivo em `errors`.
+  def remover(responsavel:)
+    if responsavel == self
+      errors.add(:base, "Você não pode remover a sua própria conta")
+      false
+    else
+      usuario.destroy
+    end
+  end
 end

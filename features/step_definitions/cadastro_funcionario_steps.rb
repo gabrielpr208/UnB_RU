@@ -21,7 +21,7 @@ module CadastroFuncionarioSteps
 
   def perfil_na_lista(siape)
     visit controle_funcionarios_path
-    find("#funcionarios td", text: siape, exact_text: true).ancestor("tr").find("td:last-child").text.strip
+    find("#funcionarios td", text: siape, exact_text: true).ancestor("tr").find("td:nth-child(4)").text.strip
   end
 end
 World(CadastroFuncionarioSteps)
@@ -40,12 +40,6 @@ end
 
 Então("o funcionário com SIAPE {string} deve aparecer na lista com o perfil {string}") do |siape, perfil|
   expect(perfil_na_lista(siape)).to eq(perfil)
-end
-
-Então("o funcionário com SIAPE {string} deve conseguir entrar na aplicação de controle") do |siape|
-  click_button "Sair"
-  fazer_login_de_funcionario("SIAPE" => siape, "senha" => CadastroFuncionarioSteps::DADOS_VALIDOS["Senha"])
-  page.assert_current_path(controle_path)
 end
 
 Então("o funcionário não deve ser cadastrado") do

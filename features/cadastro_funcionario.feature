@@ -16,7 +16,7 @@ Funcionalidade: Cadastro de funcionário
     Quando eu cadastro o funcionário "Carlos Dias" com SIAPE "1112223" e perfil "<perfil>"
     Então eu devo ver a mensagem "Funcionário cadastrado com sucesso"
     E o funcionário com SIAPE "1112223" deve aparecer na lista com o perfil "<perfil>"
-    E o funcionário com SIAPE "1112223" deve conseguir entrar na aplicação de controle
+    E o funcionário com SIAPE "1112223" deve conseguir entrar com a senha "senha123"
 
     Exemplos:
       | perfil        |

@@ -1,0 +1,78 @@
+<%# locals: (cadastro:, url:, method:, botao:) -%>
+<% edicao = cadastro.editando.present? %>
+<%= form_with model: cadastro, url:, method:, class: "formulario", html: { novalidate: true } do |f| %>
+  <% if cadastro.errors.any? %>
+    <div class="alerta alerta--erro" role="alert">
+      <%= icone :alerta, classe: "alerta__icone" %>
+      <div>
+        <p class="alerta__titulo">Não foi possível salvar o funcionário</p>
+        <p class="alerta__texto">Corrija os campos destacados e tente novamente.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Identificação</legend>
+
+    <%= render "shared/campo", form: f, atributo: :nome, rotulo: "Nome completo", simbolo: :usuario,
+                               opcoes: { autocomplete: "off", placeholder: "Ex.: José Pereira" } %>
+
+    <div class="formulario__linha">
+      <%= render "shared/campo", form: f, atributo: :siape, rotulo: "SIAPE", simbolo: :matricula,
+                                 dica: "#{Funcionario::TAMANHO_DO_SIAPE} dígitos. Ex.: 1234567",
+                                 opcoes: { inputmode: "numeric", autocomplete: "off", placeholder: "1234567" } %>
+
+      <%= render "shared/campo", form: f, atributo: :email, rotulo: "E-mail", simbolo: :email, tipo: :email_field,
+                                 opcoes: { autocomplete: "off", placeholder: "funcionario@unb.br" } %>
+    </div>
+  </fieldset>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao"><%= edicao ? "Alterar senha (opcional)" : "Senha inicial" %></legend>
+
+    <div class="formulario__linha">
+      <%= render "shared/campo", form: f, atributo: :senha, rotulo: edicao ? "Nova senha" : "Senha", simbolo: :cadeado,
+                                 tipo: :password_field,
+                                 dica: edicao ? "Deixe em branco para manter a senha atual" :
+                                                "Mínimo de #{Usuario::TAMANHO_MINIMO_SENHA} caracteres",
+                                 opcoes: { autocomplete: "new-password" } %>
+
+      <%= render "shared/campo", form: f, atributo: :confirmacao_senha,
+                                 rotulo: edicao ? "Confirmação da nova senha" : "Confirmação de senha",
+                                 simbolo: :cadeado, tipo: :password_field, dica: "Repita a senha escolhida",
+                                 opcoes: { autocomplete: "new-password" } %>
+    </div>
+  </fieldset>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Perfil de acesso</legend>
+
+    <% erros_do_perfil = cadastro.errors[:administrador] %>
+    <% id_mensagem = f.field_id(:administrador, :mensagem) %>
+    <div class="campo<%= " campo--invalido" if erros_do_perfil.any? %>">
+      <div class="segmentos">
+        <% { false => "Funcionário", true => "Administrador" }.each do |valor, rotulo| %>
+          <label class="segmentos__item">
+            <%= f.radio_button :administrador, valor, class: "segmentos__opcao",
+                               aria: { invalid: erros_do_perfil.any?, describedby: id_mensagem } %>
+            <%= rotulo %>
+          </label>
+        <% end %>
+      </div>
+      <% if erros_do_perfil.any? %>
+        <p class="campo__erro" id="<%= id_mensagem %>"><%= icone :alerta %><%= erros_do_perfil.first %></p>
+      <% else %>
+        <p class="campo__dica" id="<%= id_mensagem %>">
+          O administrador também gerencia restaurantes, catracas e funcionários e vê o relatório global.
+        </p>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <div class="formulario__acoes">
+    <%= link_to "Cancelar", controle_funcionarios_path, class: "botao botao--secundario" %>
+    <%= f.button type: "submit", class: "botao botao--primario" do %>
+      <%= icone :confirmar %> <%= botao %>
+    <% end %>
+  </div>
+<% end %>
