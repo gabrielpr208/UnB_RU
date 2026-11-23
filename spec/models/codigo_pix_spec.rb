@@ -13,6 +13,39 @@ RSpec.describe CodigoPix do
     expect(codigo).to include("62090505RU123")
   end
 
+  it "monta o código completo, campo por campo, na ordem do BR Code" do
+    expect(codigo).to eq(
+      "000201" \
+      "26360014br.gov.bcb.pix0114chave-ficticia" \
+      "52040000" \
+      "5303986" \
+      "540520.00" \
+      "5802BR" \
+      "5919RU UNB DEMONSTRACAO" \
+      "6008BRASILIA" \
+      "62090505RU123" \
+      "6304BA86"
+    )
+  end
+
+  it "calcula o tamanho de cada campo, inclusive dos campos dentro de outros" do
+    codigo = described_class.gerar(valor: 4.5, chave: "123e4567-e89b-12d3-a456-426614174000",
+                                   identificador: "ABCDEFGHIJKLMNOPQRSTUVWXY")
+
+    expect(codigo).to eq(
+      "000201" \
+      "26580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000" \
+      "52040000" \
+      "5303986" \
+      "54044.50" \
+      "5802BR" \
+      "5919RU UNB DEMONSTRACAO" \
+      "6008BRASILIA" \
+      "62290525ABCDEFGHIJKLMNOPQRSTUVWXY" \
+      "6304A41B"
+    )
+  end
+
   it "traz o valor com duas casas decimais" do
     expect(codigo).to include("540520.00")
   end
