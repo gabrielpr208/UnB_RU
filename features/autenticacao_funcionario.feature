@@ -41,3 +41,9 @@ Funcionalidade: Autenticação do funcionário
     Então eu devo ser redirecionado para a página de login de funcionário
     E devo ver a mensagem "Acesso por estudantes não autorizado"
 
+  Cenário: Sair da aplicação de controle (feliz)
+    Dado que eu estou logado como funcionário
+    Quando eu saio da minha conta
+    Então eu devo ser redirecionado para a página de login de funcionário
+    E devo ver a mensagem "Você saiu da sua conta"
+    E não devo ter acesso à aplicação de controle

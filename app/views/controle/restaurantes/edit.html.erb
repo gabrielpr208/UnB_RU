@@ -1,0 +1,6 @@
+<%= render "cabecalho", titulo: "Editar restaurante",
+                        subtitulo: "Altere o nome ou o campus do restaurante." %>
+
+<section class="cartao cartao--estreito" aria-label="Editar restaurante">
+  <%= render "formulario", restaurante: @restaurante, botao: "Salvar alterações" %>
+</section>

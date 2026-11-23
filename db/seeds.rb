@@ -7,3 +7,50 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Cardápios dos próximos 7 dias, a partir de cardapio.json (que traz o cardápio semanal por dia da semana).
+# Só o prato principal de cada variante é cadastrado: no café da manhã, o complemento.
+DIAS_DA_SEMANA = %w[ domingo segunda-feira terca-feira quarta-feira quinta-feira sexta-feira sabado ].freeze
+PRATOS_POR_REFEICAO = {
+  "cafe_da_manha" => %w[ complemento_padrao complemento_ovolactovegetariano complemento_vegetariano_estrito ],
+  "almoco" => %w[ prato_principal_padrao prato_principal_ovolactovegetariano prato_principal_vegetariano_estrito ],
+  "jantar" => %w[ prato_principal_padrao prato_principal_ovolactovegetariano prato_principal_vegetariano_estrito ]
+}.freeze
+
+semana = JSON.parse(Rails.root.join("cardapio.json").read)
+
+(Date.current..Date.current + 6).each do |data|
+  refeicoes = semana.fetch(DIAS_DA_SEMANA[data.wday])
+
+  PRATOS_POR_REFEICAO.each do |refeicao, campos|
+    cardapio = Cardapio.find_or_create_by!(data:, refeicao:)
+
+    ItemCardapio.variantes.keys.zip(campos).each do |variante, campo|
+      descricao = refeicoes.dig(refeicao, campo)
+      next if descricao.blank?
+
+      cardapio.itens.find_or_create_by!(categoria: ItemCardapio::PRATO_PRINCIPAL, variante:) do |item|
+        item.descricao = descricao
+      end
+    end
+  end
+end
+
+# Preço de cada refeição (features/validacao_entrada.feature)
+PrecoRefeicao::REFEICOES.each do |refeicao|
+  PrecoRefeicao.find_or_create_by!(refeicao:) { |preco| preco.valor = 5.20 }
+end
+
+# Restaurante e catraca para testar a Aplicação de Controle
+darcy = Restaurante.find_or_create_by!(nome: "RU Darcy Ribeiro") { |r| r.campus = "Darcy Ribeiro" }
+darcy.catracas.find_or_create_by!(identificador: "01")
+
+# Funcionário (SIAPE 1234567) e estudante (matrícula 231012345) com saldo, ambos com a senha "senha123"
+unless Funcionario.exists?(siape: "1234567")
+  usuario = Usuario.create!(nome: "José Pereira", email: "1234567@unb.br", senha: "senha123")
+  Funcionario.create!(usuario:, siape: "1234567", administrador: true)
+end
+unless Estudante.exists?(matricula: "231012345")
+  usuario = Usuario.create!(nome: "Maria Souza", email: "231012345@aluno.unb.br", senha: "senha123")
+  Estudante.create!(usuario:, matricula: "231012345", saldo: 20)
+end

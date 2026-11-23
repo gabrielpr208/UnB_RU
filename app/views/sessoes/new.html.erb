@@ -1,0 +1,37 @@
+<% content_for :title, "Entrar" %>
+<% content_for :abas, render("shared/abas_acesso") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Portal do Estudante</span>
+  </div>
+  <h1 class="titulo-pagina">Entrar</h1>
+  <p class="subtitulo-pagina">Acesse sua conta para consultar o saldo, recarregar créditos e ver o extrato.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-login">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-login">Login do estudante</h2>
+    <span class="selo">Matrícula e senha</span>
+  </header>
+
+  <%= form_with scope: :login, url: login_path, class: "formulario", html: { novalidate: true } do |f| %>
+    <div class="formulario__grupo">
+      <%= render "shared/campo", form: f, atributo: :matricula, rotulo: "Matrícula", simbolo: :matricula,
+                                 opcoes: { value: @matricula, inputmode: "numeric", autocomplete: "username",
+                                           placeholder: "231012345", autofocus: true } %>
+
+      <%= render "shared/campo", form: f, atributo: :senha, rotulo: "Senha", simbolo: :cadeado,
+                                 tipo: :password_field, opcoes: { autocomplete: "current-password" } %>
+    </div>
+
+    <div class="formulario__acoes">
+      <p class="formulario__alternativa">Ainda não tem conta? <%= link_to "Criar conta", cadastro_path %></p>
+      <%= f.button type: "submit", class: "botao botao--primario" do %>
+        Entrar <%= icone :entrar %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
+<p class="troca-de-area">É funcionário do RU? <%= link_to "Entrar na Aplicação de Controle", login_controle_path %></p>

@@ -1,0 +1,13 @@
+<nav class="abas" aria-label="Aplicação de Controle">
+  <div class="abas__conteudo">
+    <%= link_de_aba "Início", controle_path, exata: true %>
+    <%= link_de_aba "Ponto de acesso", controle_ponto_acesso_path %>
+    <%= link_de_aba "Operar catraca", controle_entrada_path %>
+    <%= link_de_aba "Histórico", controle_historico_path %>
+    <% if Current.usuario.funcionario&.administrador? %>
+      <%= link_de_aba "Restaurantes", controle_restaurantes_path %>
+      <%= link_de_aba "Catracas", controle_catracas_path %>
+      <%= link_de_aba "Relatório", controle_relatorio_path %>
+    <% end %>
+  </div>
+</nav>

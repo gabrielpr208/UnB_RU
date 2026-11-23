@@ -1,0 +1,50 @@
+<%# locals: (pagamento:) -%>
+<%= form_with model: pagamento, scope: :pagamento_cartao, url: pagar_cartao_path, class: "formulario",
+              html: { novalidate: true } do |f| %>
+  <% if pagamento.errors.any? %>
+    <div class="alerta alerta--erro" role="alert">
+      <%= icone :alerta, classe: "alerta__icone" %>
+      <div>
+        <p class="alerta__titulo">Não foi possível concluir o pagamento</p>
+        <p class="alerta__texto">
+          <%= pagamento.errors[:base].first || "Corrija os campos destacados e tente novamente." %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Valor</legend>
+
+    <%= render "shared/campo", form: f, atributo: :valor, rotulo: "Valor da recarga", prefixo: "R$",
+                               dica: "Entre #{reais(Recarga::VALOR_MINIMO)} e #{reais(Recarga::VALOR_MAXIMO)}",
+                               opcoes: { inputmode: "decimal", placeholder: "0,00", autocomplete: "off" } %>
+  </fieldset>
+
+  <%# autocomplete desligado para o navegador não sugerir cartões reais salvos. %>
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Dados do cartão</legend>
+
+    <%= render "shared/campo", form: f, atributo: :numero_cartao, rotulo: "Número do cartão", simbolo: :cartao,
+                               dica: "16 dígitos",
+                               opcoes: { inputmode: "numeric", placeholder: "0000 0000 0000 0000", autocomplete: "off" } %>
+
+    <div class="formulario__linha">
+      <%= render "shared/campo", form: f, atributo: :validade, rotulo: "Validade", simbolo: :calendario,
+                                 dica: "Mês e ano, ex.: 12/2030",
+                                 opcoes: { placeholder: "MM/AAAA", autocomplete: "off" } %>
+
+      <%= render "shared/campo", form: f, atributo: :cvv, rotulo: "CVV", simbolo: :cadeado,
+                                 dica: "3 dígitos no verso do cartão",
+                                 opcoes: { value: "", inputmode: "numeric", placeholder: "123", autocomplete: "off" } %>
+    </div>
+  </fieldset>
+
+  <%= render "aviso_demonstracao" %>
+
+  <div class="formulario__acoes formulario__acoes--fim">
+    <%= f.button type: "submit", class: "botao botao--sucesso" do %>
+      <%= icone :cartao %> Efetuar pagamento
+    <% end %>
+  </div>
+<% end %>

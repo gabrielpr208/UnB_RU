@@ -1,0 +1,44 @@
+<% content_for :title, "Operar catraca" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Operação da catraca" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Catraca <%= @ponto_acesso.catraca.identificador %></span>
+    <span class="selo"><%= icone :local %> <%= @ponto_acesso.restaurante.nome %></span>
+  </div>
+  <h1 class="titulo-pagina">Validação de entrada</h1>
+  <p class="subtitulo-pagina">Informe a matrícula apresentada pelo estudante para liberar a catraca.</p>
+</div>
+
+<section class="cartao cartao--estreito" aria-labelledby="titulo-entrada">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-entrada">Identificação do estudante</h2>
+    <% estado = flash[:catraca] || "bloqueada" %>
+    <span class="catraca catraca--<%= estado %>" data-catraca="<%= estado %>" role="status">
+      <%= icone(estado == "liberada" ? :confirmar : :cadeado) %>
+      Catraca <%= estado %>
+    </span>
+  </header>
+
+  <%= form_with url: controle_entrada_path, class: "formulario" do |f| %>
+    <div class="campo">
+      <%= f.label :matricula, "Matrícula", class: "campo__rotulo" %>
+      <div class="campo__controle">
+        <%= icone :matricula, classe: "campo__icone" %>
+        <%= f.text_field :matricula, class: "campo__entrada", placeholder: "231012345",
+                                     inputmode: "numeric", autocomplete: "off", autofocus: true %>
+      </div>
+    </div>
+
+    <div class="formulario__acoes">
+      <p class="formulario__alternativa">
+        Operando em outra catraca? <%= link_to "Trocar ponto de acesso", controle_ponto_acesso_path %>
+      </p>
+      <%= f.button type: "submit", class: "botao botao--primario" do %>
+        Validar entrada <%= icone :entrar %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

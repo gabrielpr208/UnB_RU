@@ -1,0 +1,35 @@
+<%# locals: (restaurante:, botao:) -%>
+<%= form_with model: [ :controle, restaurante ], class: "formulario", html: { novalidate: true } do |f| %>
+  <% if restaurante.errors.any? %>
+    <div class="alerta alerta--erro" role="alert">
+      <%= icone :alerta, classe: "alerta__icone" %>
+      <div>
+        <p class="alerta__titulo">Não foi possível salvar o restaurante</p>
+        <p class="alerta__texto">Corrija os campos destacados e tente novamente.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Dados do restaurante</legend>
+
+    <%= render "shared/campo", form: f, atributo: :nome, rotulo: "Nome", simbolo: :refeicao,
+                               dica: "Entre #{Restaurante::TAMANHO_DO_NOME.min} e #{Restaurante::TAMANHO_DO_NOME.max} caracteres",
+                               opcoes: { placeholder: "Ex.: RU Darcy Ribeiro", autocomplete: "off" } %>
+    <%= render "shared/campo", form: f, atributo: :campus, rotulo: "Campus", simbolo: :local,
+                               dica: Restaurante::CAMPI.to_sentence(two_words_connector: " ou ", last_word_connector: " ou "),
+                               opcoes: { list: "campi", autocomplete: "off" } %>
+    <datalist id="campi">
+      <% Restaurante::CAMPI.each do |campus| %>
+        <option value="<%= campus %>"></option>
+      <% end %>
+    </datalist>
+  </fieldset>
+
+  <div class="formulario__acoes">
+    <%= link_to "Cancelar", controle_restaurantes_path, class: "botao botao--secundario" %>
+    <%= f.button type: "submit", class: "botao botao--primario" do %>
+      <%= icone :confirmar %> <%= botao %>
+    <% end %>
+  </div>
+<% end %>

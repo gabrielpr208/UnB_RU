@@ -8,7 +8,7 @@ Funcionalidade: Adicionar créditos
   Regras de negócio:
   - PIX: o valor da recarga deve estar entre R$ 1,00 e R$ 1.000,00
   - PIX: o código gerado expira em 1 minuto; o saldo só é creditado ao confirmar o pagamento dentro desse prazo
-  - Cartão: o valor da recarga deve estar entre R$ 1,00 e R$ 1000,00
+  - Cartão: o valor da recarga deve estar entre R$ 1,00 e R$ 1.000,00
   - Cartão: número com 16 dígitos, validade não vencida e CVV com 3 dígitos; com dados válidos, o saldo é creditado imediatamente
 
   Contexto:
@@ -21,7 +21,7 @@ Funcionalidade: Adicionar créditos
   Esquema do Cenário: Gerar código PIX com valor válido (feliz)
     Quando eu solicito uma recarga de "<valor>" via "PIX"
     Então eu devo ver o código PIX para pagamento
-    E eu devo ver o botão "Confirmar pagamento"
+    E eu devo ver o botão "Conferir pagamento"
     E meu saldo deve continuar R$ 10,00
 
     Exemplos:
@@ -80,6 +80,6 @@ Funcionalidade: Adicionar créditos
       | 0,99    | PIX               | O valor mínimo de recarga é R$ 1,00     |
       | 1000,01 | PIX               | O valor máximo de recarga é R$ 1.000,00 |
       | 0,00    | cartão de crédito | O valor mínimo de recarga é R$ 1,00     |
-      | 1500,01 | cartão de crédito | O valor máximo de recarga é R$ 1000,00  |
+      | 1500,01 | cartão de crédito | O valor máximo de recarga é R$ 1.000,00 |
       | abc     | PIX               | Informe um valor numérico válido        |
       |         | cartão de crédito | Informe o valor da recarga              |

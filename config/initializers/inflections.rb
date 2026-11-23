@@ -14,3 +14,9 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.irregular "sessao", "sessoes"
+  inflect.irregular "ponto_acesso", "pontos_acesso"
+  inflect.irregular "preco_refeicao", "precos_refeicao"
+end

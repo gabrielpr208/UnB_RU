@@ -1,0 +1,51 @@
+<%= render "cabecalho", titulo: "Restaurantes",
+                        subtitulo: "Restaurantes que os funcionários podem selecionar na Aplicação de Controle." %>
+
+<section class="cartao" aria-labelledby="titulo-restaurantes">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-restaurantes">Restaurantes cadastrados</h2>
+    <%= link_to new_controle_restaurante_path, class: "botao botao--primario botao--pequeno" do %>
+      <%= icone :adicionar %> Novo restaurante
+    <% end %>
+  </header>
+
+  <% if @restaurantes.empty? %>
+    <div class="vazio">
+      <span class="vazio__icone"><%= icone :refeicao %></span>
+      <p class="vazio__titulo">Nenhum restaurante cadastrado</p>
+      <p class="vazio__texto">Cadastre o primeiro restaurante para começar.</p>
+    </div>
+  <% else %>
+    <table class="tabela" id="restaurantes">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Campus</th>
+          <th scope="col"><span class="visualmente-oculto">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @restaurantes.each do |restaurante| %>
+          <tr>
+            <td class="tabela__destaque"><%= restaurante.nome %></td>
+            <td><%= restaurante.campus %></td>
+            <td>
+              <div class="tabela__acoes">
+                <%= link_to edit_controle_restaurante_path(restaurante), class: "botao botao--secundario botao--pequeno",
+                            aria: { label: "Editar #{restaurante.nome}" } do %>
+                  <%= icone :editar %> Editar
+                <% end %>
+                <%= button_to controle_restaurante_path(restaurante), method: :delete,
+                              class: "botao botao--perigo botao--pequeno",
+                              aria: { label: "Remover #{restaurante.nome}" },
+                              form: { data: { turbo_confirm: "Remover o restaurante #{restaurante.nome}?" } } do %>
+                  <%= icone :remover %> Remover
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</section>

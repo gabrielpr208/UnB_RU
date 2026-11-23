@@ -4,6 +4,7 @@
 erDiagram
     USUARIO ||--o| ESTUDANTE : "especializa em"
     USUARIO ||--o| FUNCIONARIO : "especializa em"
+    USUARIO ||--o{ SESSAO : "mantém"
 
     ESTUDANTE ||--o{ RECARGA : realiza
     ESTUDANTE ||--o{ ACESSO : realiza
@@ -22,6 +23,14 @@ erDiagram
         string senha_digest "obrigatório, mín. 6 caracteres antes do hash"
     }
 
+    SESSAO {
+        int id PK
+        int usuario_id FK
+        string endereco_ip
+        string user_agent
+        datetime created_at "id guardado em cookie assinado; apagada no logout"
+    }
+
     ESTUDANTE {
         int usuario_id PK, FK
         string matricula UK "9 dígitos numéricos"
@@ -30,7 +39,7 @@ erDiagram
 
     FUNCIONARIO {
         int usuario_id PK, FK
-        string siape UK
+        string siape UK "7 dígitos numéricos"
         boolean administrador "default false"
     }
 
@@ -51,7 +60,7 @@ erDiagram
         int funcionario_id FK
         int catraca_id FK
         datetime iniciado_em
-        datetime encerrado_em "nulo = catraca em uso"
+        datetime encerrado_em "nulo = catraca em uso; só um em aberto por funcionário e por catraca"
     }
 
     ACESSO {

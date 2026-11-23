@@ -1,0 +1,44 @@
+<%# locals: (catraca:, restaurantes:, botao:) -%>
+<%= form_with model: [ :controle, catraca ], class: "formulario", html: { novalidate: true } do |f| %>
+  <% if catraca.errors.any? %>
+    <div class="alerta alerta--erro" role="alert">
+      <%= icone :alerta, classe: "alerta__icone" %>
+      <div>
+        <p class="alerta__titulo">Não foi possível salvar a catraca</p>
+        <p class="alerta__texto">Corrija os campos destacados e tente novamente.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <fieldset class="formulario__grupo">
+    <legend class="rotulo-secao">Dados da catraca</legend>
+
+    <%# A validação fica em :restaurante, mas o campo do formulário é o restaurante_id. %>
+    <% erros_do_restaurante = catraca.errors[:restaurante] %>
+    <div class="campo<%= " campo--invalido" if erros_do_restaurante.any? %>">
+      <%= f.label :restaurante_id, "Restaurante", class: "campo__rotulo" %>
+      <div class="campo__controle">
+        <%= icone :local, classe: "campo__icone" %>
+        <%= f.collection_select :restaurante_id, restaurantes, :id, :nome,
+                                { prompt: "Selecione o restaurante" },
+                                class: "campo__entrada",
+                                aria: { invalid: erros_do_restaurante.any?,
+                                        describedby: ("catraca_restaurante_id_mensagem" if erros_do_restaurante.any?) } %>
+      </div>
+      <% if erros_do_restaurante.any? %>
+        <p class="campo__erro" id="catraca_restaurante_id_mensagem"><%= icone :alerta %><%= erros_do_restaurante.first %></p>
+      <% end %>
+    </div>
+
+    <%= render "shared/campo", form: f, atributo: :identificador, rotulo: "Identificador", simbolo: :entrar,
+                               dica: "2 dígitos, ex.: 01",
+                               opcoes: { inputmode: "numeric", placeholder: "01", autocomplete: "off" } %>
+  </fieldset>
+
+  <div class="formulario__acoes">
+    <%= link_to "Cancelar", controle_catracas_path, class: "botao botao--secundario" %>
+    <%= f.button type: "submit", class: "botao botao--primario" do %>
+      <%= icone :confirmar %> <%= botao %>
+    <% end %>
+  </div>
+<% end %>

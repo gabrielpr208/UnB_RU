@@ -1,0 +1,12 @@
+<% if notice.present? %>
+  <div class="alerta alerta--sucesso" role="status">
+    <%= icone :confirmar, classe: "alerta__icone" %>
+    <p class="alerta__titulo"><%= notice %></p>
+  </div>
+<% end %>
+<% if alert.present? %>
+  <div class="alerta alerta--erro" role="alert">
+    <%= icone :alerta, classe: "alerta__icone" %>
+    <p class="alerta__titulo"><%= alert %></p>
+  </div>
+<% end %>

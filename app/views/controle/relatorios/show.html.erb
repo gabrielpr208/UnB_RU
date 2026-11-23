@@ -1,0 +1,128 @@
+<% content_for :title, "Histórico de acessos" %>
+<% content_for :secao, "Aplicação de Controle" %>
+<% content_for :secao_descricao, "Restaurante Universitário · Gestão de restaurantes e catracas" %>
+<% content_for :abas, render("shared/abas_controle") %>
+
+<div class="pagina__topo">
+  <div class="selos">
+    <span class="selo selo--primario">Aplicação de Controle</span>
+    <span class="selo">Administrador</span>
+  </div>
+  <h1 class="titulo-pagina">Histórico de acessos</h1>
+  <p class="subtitulo-pagina">Todos os acessos registrados nos restaurantes, do mais recente para o mais antigo.</p>
+  <%= link_to controle_relatorio_pdf_path, class: "botao botao--secundario botao--pequeno", data: { turbo: false } do %>
+    <%= icone :baixar %> Exportar relatório global (PDF)
+  <% end %>
+</div>
+
+<section class="cartao" aria-labelledby="titulo-acessos">
+  <%# Sem JavaScript, escolher o restaurante e clicar em Filtrar já carrega as catracas dele. %>
+  <%= form_with model: @relatorio, scope: "", url: controle_relatorio_path, method: :get, class: "filtros",
+                data: { controller: "envio-automatico" } do |f| %>
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-acessos">Acessos</h2>
+      <fieldset class="segmentos" aria-label="Agrupar por">
+        <% { "" => "Sem agrupar", "restaurante" => "Por restaurante", "catraca" => "Por catraca" }.each do |valor, rotulo| %>
+          <label class="segmentos__item">
+            <%= f.radio_button :agrupar, valor, checked: @relatorio.agrupar.to_s == valor,
+                               class: "segmentos__opcao", data: { action: "envio-automatico#enviar" } %>
+            <%= rotulo %>
+          </label>
+        <% end %>
+      </fieldset>
+    </header>
+
+    <div class="filtros__campos">
+      <div class="campo">
+        <%= f.label :restaurante_id, "Restaurante", class: "campo__rotulo" %>
+        <div class="campo__controle">
+          <%= icone :local, classe: "campo__icone" %>
+          <%= f.collection_select :restaurante_id, @restaurantes, :id, :nome,
+                                  { include_blank: "Todos os restaurantes" },
+                                  class: "campo__entrada", data: { action: "envio-automatico#enviar" } %>
+        </div>
+      </div>
+
+      <div class="campo">
+        <%= f.label :catraca_id, "Catraca", class: "campo__rotulo" %>
+        <div class="campo__controle">
+          <%= icone :entrar, classe: "campo__icone" %>
+          <%= f.collection_select :catraca_id, @relatorio.catracas_disponiveis, :id, :identificador,
+                                  { include_blank: "Todas as catracas", selected: @relatorio.catraca&.id },
+                                  class: "campo__entrada", disabled: @relatorio.restaurante.nil?,
+                                  aria: { describedby: ("catraca_id_dica" unless @relatorio.restaurante) },
+                                  data: { action: "envio-automatico#enviar" } %>
+        </div>
+        <% unless @relatorio.restaurante %>
+          <p class="campo__dica" id="catraca_id_dica">Selecione um restaurante para filtrar por catraca</p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="filtros__acoes">
+      <% if @relatorio.filtrado? || @relatorio.agrupar %>
+        <%= link_to controle_relatorio_path, class: "botao botao--secundario" do %>
+          <%= icone :limpar %> Limpar filtros
+        <% end %>
+      <% end %>
+      <%= f.button type: "submit", name: nil, class: "botao botao--primario" do %>
+        <%= icone :filtro %> Filtrar
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @relatorio.acessos.empty? %>
+    <div class="vazio">
+      <span class="vazio__icone"><%= icone :extrato %></span>
+      <% if @relatorio.filtrado? %>
+        <p class="vazio__titulo">Nenhum acesso encontrado para os filtros selecionados</p>
+        <p class="vazio__texto">Tente outro restaurante ou outra catraca.</p>
+      <% else %>
+        <p class="vazio__titulo">Nenhum acesso registrado ainda</p>
+        <p class="vazio__texto">As entradas validadas nas catracas vão aparecer aqui.</p>
+      <% end %>
+    </div>
+  <% else %>
+    <% if @relatorio.agrupar %>
+      <h3 class="rotulo-secao">Totais <%= @relatorio.agrupar == "restaurante" ? "por restaurante" : "por catraca" %></h3>
+      <table class="tabela" id="totais">
+        <thead>
+          <tr>
+            <th scope="col"><%= @relatorio.agrupar == "restaurante" ? "Restaurante" : "Catraca" %></th>
+            <th scope="col">Acessos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @relatorio.totais.each do |grupo, total| %>
+            <tr>
+              <td class="tabela__destaque"><%= grupo %></td>
+              <td><%= total %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+
+    <h3 class="rotulo-secao"><%= pluralize(@relatorio.acessos.size, "acesso", plural: "acessos") %></h3>
+    <table class="tabela" id="acessos">
+      <thead>
+        <tr>
+          <th scope="col">Estudante</th>
+          <th scope="col">Restaurante</th>
+          <th scope="col">Catraca</th>
+          <th scope="col">Data e hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @relatorio.acessos.each do |acesso| %>
+          <tr>
+            <td class="tabela__destaque" title="<%= acesso.estudante.nome %>"><%= acesso.estudante.matricula %></td>
+            <td><%= acesso.catraca.restaurante.nome %></td>
+            <td><%= acesso.catraca.identificador %></td>
+            <td><%= tag.time data_e_hora(acesso.data_hora), datetime: acesso.data_hora.iso8601 %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</section>

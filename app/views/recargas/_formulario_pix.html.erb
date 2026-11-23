@@ -1,0 +1,20 @@
+<%# locals: (recarga:) -%>
+<%= form_with model: recarga, scope: :recarga, url: gerar_pix_path, class: "formulario",
+              html: { novalidate: true } do |f| %>
+  <p class="cartao__descricao">
+    Informe o valor e gere um QR Code. Pague pelo app do banco e depois confira o pagamento por aqui.
+  </p>
+
+  <%= render "shared/campo", form: f, atributo: :valor, rotulo: "Valor da recarga", prefixo: "R$",
+                             dica: "Entre #{reais(Recarga::VALOR_MINIMO)} e #{reais(Recarga::VALOR_MAXIMO)}",
+                             opcoes: { inputmode: "decimal", placeholder: "0,00", autocomplete: "off",
+                                       autofocus: true } %>
+
+  <%= render "aviso_demonstracao" %>
+
+  <div class="formulario__acoes formulario__acoes--fim">
+    <%= f.button type: "submit", class: "botao botao--primario" do %>
+      <%= icone :qrcode %> Gerar código PIX
+    <% end %>
+  </div>
+<% end %>
