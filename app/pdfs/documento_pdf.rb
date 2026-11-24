@@ -11,6 +11,7 @@ class DocumentoPdf
   COR_TEXTO_SUAVE = "5F6368".freeze
   COR_BORDA = "DADCE0".freeze
   COR_ENTRADA = "1E7B34".freeze
+  ALTURA_DO_RODAPE = 20
 
   def initialize(gerado_em: Time.current)
     @gerado_em = gerado_em
@@ -37,12 +38,14 @@ class DocumentoPdf
   end
 
   def cabecalho
-    pdf.fill_color COR_PRIMARIA
-    pdf.text "RU UnB · Restaurante Universitário", size: 10, style: :bold
-    pdf.fill_color "000000"
+    pdf.text "RU UnB · Restaurante Universitário", size: 10, style: :bold, color: COR_PRIMARIA
     pdf.move_down 4
     pdf.text titulo, size: 20, style: :bold
     pdf.move_down 6
+    linha_divisoria
+  end
+
+  def linha_divisoria
     pdf.stroke_color COR_BORDA
     pdf.stroke_horizontal_rule
     pdf.move_down 16
@@ -74,16 +77,25 @@ class DocumentoPdf
     pdf.move_down 16
   end
 
+  # Faixa logo abaixo da margem inferior, em todas as páginas: data de geração à esquerda e numeração à direita.
   def rodape
-    pdf.repeat(:all) do
-      pdf.bounding_box([ pdf.bounds.left, pdf.bounds.bottom - 20 ], width: pdf.bounds.width, height: 20) do
-        pdf.fill_color COR_TEXTO_SUAVE
-        pdf.text "Gerado em #{data_e_hora(gerado_em)}", size: 8
-        pdf.fill_color "000000"
-      end
+    pdf.repeat(:all) { data_de_geracao }
+    numeracao_das_paginas
+  end
+
+  def data_de_geracao
+    pdf.bounding_box([ pdf.bounds.left, topo_do_rodape ], width: pdf.bounds.width, height: ALTURA_DO_RODAPE) do
+      pdf.text "Gerado em #{data_e_hora(gerado_em)}", size: 8, color: COR_TEXTO_SUAVE
     end
-    pdf.number_pages "Página <page> de <total>", at: [ pdf.bounds.right - 120, pdf.bounds.bottom - 20 ],
+  end
+
+  def numeracao_das_paginas
+    pdf.number_pages "Página <page> de <total>", at: [ pdf.bounds.right - 120, topo_do_rodape ],
                                                  width: 120, align: :right, size: 8, color: COR_TEXTO_SUAVE
+  end
+
+  def topo_do_rodape
+    pdf.bounds.bottom - ALTURA_DO_RODAPE
   end
 
   def reais(valor)
