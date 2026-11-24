@@ -46,12 +46,17 @@ class ConfiguracaoPontoAcesso
   end
 
   def validar_catraca
+    mensagem = erro_da_catraca
+    errors.add(:numero_da_catraca, mensagem) if mensagem
+  end
+
+  def erro_da_catraca
     if numero_da_catraca.blank?
-      errors.add(:numero_da_catraca, "Informe o número da catraca")
+      "Informe o número da catraca"
     elsif !numero_da_catraca.strip.match?(Catraca::IDENTIFICADOR)
-      errors.add(:numero_da_catraca, "O número da catraca deve ter 2 dígitos")
+      "O número da catraca deve ter 2 dígitos"
     elsif restaurante_escolhido && catraca_escolhida.nil?
-      errors.add(:numero_da_catraca, "Catraca não encontrada neste restaurante")
+      "Catraca não encontrada neste restaurante"
     end
   end
 end

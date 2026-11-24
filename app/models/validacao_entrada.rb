@@ -10,19 +10,9 @@ class ValidacaoEntrada
   def processar
     return recusar("Identificação inválida") unless estudante
     return recusar("Fora do horário de refeição") unless preco
+    return recusar("Saldo insuficiente") unless cobrar
 
-    Estudante.transaction do
-      estudante.lock!
-
-      return recusar("Saldo insuficiente") if estudante.saldo < preco
-
-      estudante.update!(saldo: estudante.saldo - preco)
-      @catraca.acessos.create!(estudante:, data_hora: @agora, valor_cobrado: preco)
-    end
-
-    @liberada = true
-    @mensagem = "Entrada liberada"
-    true
+    liberar
   end
 
   def liberada?
@@ -37,6 +27,20 @@ class ValidacaoEntrada
 
   def preco
     @preco ||= PrecoRefeicao.vigente(@agora)
+  end
+
+  def cobrar
+    Estudante.transaction do
+      next false unless estudante.debitar(preco)
+
+      @catraca.acessos.create!(estudante:, data_hora: @agora, valor_cobrado: preco)
+    end
+  end
+
+  def liberar
+    @liberada = true
+    @mensagem = "Entrada liberada"
+    true
   end
 
   def recusar(mensagem)

@@ -88,10 +88,14 @@ class Extrato
   end
 
   def validar_faixa_de_valor
-    errors.add(:valor_minimo, "Informe um valor numérico válido") if valor_minimo.present? && minimo.nil?
-    errors.add(:valor_maximo, "Informe um valor numérico válido") if valor_maximo.present? && maximo.nil?
+    validar_valor_numerico(:valor_minimo, minimo)
+    validar_valor_numerico(:valor_maximo, maximo)
     return unless minimo && maximo && minimo > maximo
 
     errors.add(:valor_maximo, "O valor máximo não pode ser menor que o valor mínimo")
+  end
+
+  def validar_valor_numerico(campo, valor)
+    errors.add(campo, "Informe um valor numérico válido") if public_send(campo).present? && valor.nil?
   end
 end

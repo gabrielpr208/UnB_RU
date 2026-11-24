@@ -49,10 +49,12 @@ module CadastroDeUsuario
   def usuario
     @usuario ||= (editando ? Usuario.find(editando.usuario_id) : Usuario.new).tap do |usuario|
       usuario.assign_attributes(nome:, email:)
-      if usuario.new_record? || senha.present? || confirmacao_senha.present?
-        usuario.assign_attributes(senha:, senha_confirmation: confirmacao_senha)
-      end
+      usuario.assign_attributes(senha:, senha_confirmation: confirmacao_senha) if alterar_senha?
     end
+  end
+
+  def alterar_senha?
+    editando.nil? || senha.present? || confirmacao_senha.present?
   end
 
   def especializacao

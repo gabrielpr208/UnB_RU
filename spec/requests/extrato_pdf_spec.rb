@@ -83,6 +83,13 @@ RSpec.describe "Exportação do extrato em PDF", type: :request do
         expect(texto_do_pdf).not_to include("09/10/2026")
       end
 
+      it "volta para o extrato, com os filtros, quando nenhuma movimentação passa por eles" do
+        get extrato_pdf_path(valor_minimo: "500")
+
+        expect(response).to redirect_to(extrato_path(valor_minimo: "500"))
+        expect(flash[:alert]).to eq("Não há movimentações para exportar")
+      end
+
       it "volta para o extrato quando os filtros são inválidos" do
         get extrato_pdf_path(data_inicial: "2026-10-12", data_final: "2026-10-10")
 

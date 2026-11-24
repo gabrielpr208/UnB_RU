@@ -82,6 +82,12 @@ RSpec.describe CadastroEstudante, type: :model do
     include_examples "cadastro recusado", :senha, "A senha deve ter no mínimo 6 caracteres"
   end
 
+  describe "#save sem senha" do
+    subject(:cadastro) { described_class.new(dados_validos_de_cadastro(senha: "", confirmacao_senha: "")) }
+
+    include_examples "cadastro recusado", :senha, "A senha é obrigatória"
+  end
+
   describe "#save sem nome" do
     subject(:cadastro) { described_class.new(dados_validos_de_cadastro(nome: "")) }
 
