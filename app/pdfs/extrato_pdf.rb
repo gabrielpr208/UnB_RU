@@ -42,16 +42,26 @@ class ExtratoPdf < DocumentoPdf
   # Retorno:: nenhum.
   # Efeitos colaterais:: desenha no PDF.
   def conteudo
+    dados_do_estudante
+    tabela_de_movimentacoes
+    resumo
+  end
+
+  def dados_do_estudante
     dados(
       "Estudante" => estudante.nome,
       "Matrícula" => estudante.matricula,
       "Saldo atual" => reais(estudante.saldo),
       "Movimentações" => descricao_dos_filtros
     )
+  end
 
+  def tabela_de_movimentacoes
     subtitulo "Movimentações"
     tabela([ [ "MOVIMENTAÇÃO", "DATA E HORA", "VALOR" ], *linhas ], larguras: [ 250, 130, nil ], alinhar_a_direita: [ 2 ])
+  end
 
+  def resumo
     subtitulo "Resumo"
     dados(
       "Entradas" => reais_com_sinal(extrato.entradas),
@@ -94,12 +104,22 @@ class ExtratoPdf < DocumentoPdf
   def descricao_dos_filtros
     return "todas" unless extrato.filtrado?
 
+    partes = [ DESCRICAO_DO_TIPO[extrato.tipo], *descricao_do_periodo, *descricao_da_faixa_de_valor ]
+    "filtradas (#{partes.compact.join(', ')})"
+  end
+
+  def descricao_do_periodo
     partes = []
-    partes << { "recargas" => "só recargas", "refeicoes" => "só refeições" }[extrato.tipo]
     partes << "a partir de #{data(extrato.data_inicial)}" if extrato.data_inicial
     partes << "até #{data(extrato.data_final)}" if extrato.data_final
-    partes << "valor mínimo de #{reais(ValorMonetario.new.cast(extrato.valor_minimo))}" if extrato.valor_minimo.present?
-    partes << "valor máximo de #{reais(ValorMonetario.new.cast(extrato.valor_maximo))}" if extrato.valor_maximo.present?
-    "filtradas (#{partes.compact.join(', ')})"
+    partes
+  end
+
+  # O controller só gera o PDF com filtros válidos, então minimo e maximo só são nil quando estão em branco.
+  def descricao_da_faixa_de_valor
+    partes = []
+    partes << "valor mínimo de #{reais(extrato.minimo)}" if extrato.minimo
+    partes << "valor máximo de #{reais(extrato.maximo)}" if extrato.maximo
+    partes
   end
 end

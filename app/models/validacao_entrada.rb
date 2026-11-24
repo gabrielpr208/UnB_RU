@@ -31,19 +31,9 @@ class ValidacaoEntrada
   def processar
     return recusar("Identificação inválida") unless estudante
     return recusar("Fora do horário de refeição") unless preco
+    return recusar("Saldo insuficiente") unless cobrar
 
-    Estudante.transaction do
-      estudante.lock!
-
-      return recusar("Saldo insuficiente") if estudante.saldo < preco
-
-      estudante.update!(saldo: estudante.saldo - preco)
-      @catraca.acessos.create!(estudante:, data_hora: @agora, valor_cobrado: preco)
-    end
-
-    @liberada = true
-    @mensagem = "Entrada liberada"
-    true
+    liberar
   end
 
   # Diz se a entrada foi liberada por #processar.
@@ -75,16 +65,6 @@ class ValidacaoEntrada
     @preco ||= PrecoRefeicao.vigente(@agora)
   end
 
-<<<<<<< Updated upstream
-=======
-  # Cobra a refeição do estudante e registra o acesso na catraca.
-  #
-  # Argumentos:: nenhum.
-  # Retorno::
-  #   - o Acesso criado, se a cobrança deu certo;
-  #   - +false+ se o saldo é insuficiente.
-  # Efeitos colaterais::
-  #   numa mesma transação, desconta o preço do saldo do estudante e cria um Acesso no banco.
   def cobrar
     Estudante.transaction do
       next false unless estudante.debitar(preco)
@@ -110,7 +90,6 @@ class ValidacaoEntrada
   #   - +mensagem+: motivo da recusa.
   # Retorno:: +false+.
   # Efeitos colaterais:: define #mensagem com o motivo da recusa.
->>>>>>> Stashed changes
   def recusar(mensagem)
     @mensagem = mensagem
     false

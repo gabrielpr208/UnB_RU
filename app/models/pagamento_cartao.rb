@@ -1,5 +1,3 @@
-# Formulário da recarga via cartão de crédito. Os dados do cartão são fictícios: passam por uma
-# conferência simples e não são guardados. Com dados válidos, o saldo é creditado na hora.
 class PagamentoCartao
   include ActiveModel::Model
   include ActiveModel::Attributes
@@ -68,10 +66,7 @@ class PagamentoCartao
   #   adiciona um erro geral e um erro em cada campo em branco, além dos erros de formato
   #   (ver #validar_numero, #validar_validade e #validar_cvv).
   def validar_cartao
-    em_branco = CAMPOS_DO_CARTAO.select { |campo| public_send(campo).blank? }
-    errors.add(:base, "Preencha todos os dados do cartão") if em_branco.any?
-    em_branco.each { |campo| errors.add(campo, "Campo obrigatório") }
-
+    validar_preenchimento
     validar_numero if numero_cartao.present?
     validar_validade if validade.present?
     validar_cvv if cvv.present?
@@ -103,11 +98,11 @@ class PagamentoCartao
   # Retorno:: nenhum.
   # Efeitos colaterais:: adiciona um erro em +validade+ quando o formato é inválido ou o cartão está vencido.
   def validar_validade
-    mes, ano = validade.strip.match(VALIDADE)&.captures&.map(&:to_i)
+    fim = fim_da_validade
 
-    if mes.nil? || !(1..12).cover?(mes)
+    if fim.nil?
       errors.add(:validade, "Validade inválida. Use o formato MM/AAAA")
-    elsif Date.new(ano_completo(ano), mes).end_of_month < Date.current
+    elsif fim < Date.current
       errors.add(:validade, "Cartão vencido")
     end
   end

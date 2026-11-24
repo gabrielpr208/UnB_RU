@@ -33,13 +33,20 @@ class RelatorioPdf < DocumentoPdf
   # Retorno:: nenhum.
   # Efeitos colaterais:: desenha no PDF.
   def conteudo
+    tabela_de_totais
+    tabela_de_acessos
+  end
+
+  def tabela_de_totais
     totais = relatorio.totais_por_restaurante
 
     subtitulo "Totais por restaurante"
     tabela([ [ "RESTAURANTE", "ACESSOS" ], *totais.map { |nome, total| [ nome, total.to_s ] },
              [ "Total geral", totais.sum(&:last).to_s ] ],
            larguras: [ 380, nil ], alinhar_a_direita: [ 1 ])
+  end
 
+  def tabela_de_acessos
     subtitulo "Acessos"
     if relatorio.acessos.empty?
       pdf.text "Nenhum acesso registrado.", size: 10, color: COR_TEXTO_SUAVE

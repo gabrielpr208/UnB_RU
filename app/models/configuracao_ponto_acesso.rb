@@ -82,8 +82,6 @@ class ConfiguracaoPontoAcesso
   # Retorno:: nenhum.
   # Efeitos colaterais:: adiciona um erro em +numero_da_catraca+ quando o número é inválido.
   def validar_catraca
-<<<<<<< Updated upstream
-=======
     mensagem = erro_da_catraca
     errors.add(:numero_da_catraca, mensagem) if mensagem
   end
@@ -95,14 +93,14 @@ class ConfiguracaoPontoAcesso
   #   - +String+ com a mensagem de erro;
   #   - +nil+ se o número é válido ou se o restaurante não foi encontrado (esse erro já aparece no restaurante).
   # Efeitos colaterais:: nenhum.
+
   def erro_da_catraca
->>>>>>> Stashed changes
     if numero_da_catraca.blank?
-      errors.add(:numero_da_catraca, "Informe o número da catraca")
+      "Informe o número da catraca"
     elsif !numero_da_catraca.strip.match?(Catraca::IDENTIFICADOR)
-      errors.add(:numero_da_catraca, "O número da catraca deve ter 2 dígitos")
+      "O número da catraca deve ter 2 dígitos"
     elsif restaurante_escolhido && catraca_escolhida.nil?
-      errors.add(:numero_da_catraca, "Catraca não encontrada neste restaurante")
+      "Catraca não encontrada neste restaurante"
     end
   end
 end

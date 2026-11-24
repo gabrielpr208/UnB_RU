@@ -22,26 +22,16 @@ class ExtratosController < ApplicationController
   #   inválidos ou sem movimentações, redireciona para o extrato com um alerta.
   def pdf
     if @extrato.invalid?
-      redirect_to extrato_path(filtros), alert: "Corrija os filtros do extrato antes de exportar"
+      voltar_ao_extrato "Corrija os filtros do extrato antes de exportar"
     elsif @extrato.movimentacoes.empty?
-      redirect_to extrato_path(filtros), alert: "Não há movimentações para exportar"
+      voltar_ao_extrato "Não há movimentações para exportar"
     else
-      send_data ExtratoPdf.new(@extrato).render,
-                filename: "extrato-#{@estudante.matricula}-#{Date.current.strftime('%Y-%m-%d')}.pdf",
-                type: "application/pdf", disposition: "attachment"
+      send_data ExtratoPdf.new(@extrato).render, filename: nome_do_pdf, type: "application/pdf", disposition: "attachment"
     end
   end
 
   private
 
-<<<<<<< Updated upstream
-=======
-  # Volta para a tela do extrato, mantendo os filtros.
-  #
-  # Argumentos::
-  #   - +alerta+: mensagem mostrada ao estudante.
-  # Retorno:: nenhum.
-  # Efeitos colaterais:: redireciona para o extrato com os mesmos filtros e o alerta.
   def voltar_ao_extrato(alerta)
     redirect_to extrato_path(filtros), alert: alerta
   end
@@ -60,7 +50,6 @@ class ExtratosController < ApplicationController
   # Argumentos:: nenhum.
   # Retorno:: o Estudante logado.
   # Efeitos colaterais:: define <tt>@estudante</tt> e <tt>@extrato</tt>.
->>>>>>> Stashed changes
   def carregar_extrato
     @estudante = Current.usuario.estudante
     @extrato = Extrato.new(filtros)

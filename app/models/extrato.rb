@@ -160,24 +160,14 @@ class Extrato
   #   adiciona erros em +valor_minimo+ e +valor_maximo+ quando não são numéricos, e em +valor_maximo+ quando
   #   a faixa é invertida.
   def validar_faixa_de_valor
-    errors.add(:valor_minimo, "Informe um valor numérico válido") if valor_minimo.present? && minimo.nil?
-    errors.add(:valor_maximo, "Informe um valor numérico válido") if valor_maximo.present? && maximo.nil?
+    validar_valor_numerico(:valor_minimo, minimo)
+    validar_valor_numerico(:valor_maximo, maximo)
     return unless minimo && maximo && minimo > maximo
 
     errors.add(:valor_maximo, "O valor máximo não pode ser menor que o valor mínimo")
   end
-<<<<<<< Updated upstream
-=======
 
-  # Confere se um campo da faixa de valor preenchido virou um número.
-  #
-  # Argumentos::
-  #   - +campo+: nome do campo (+:valor_minimo+ ou +:valor_maximo+).
-  #   - +valor+: valor já convertido do campo (+nil+ se a conversão falhou).
-  # Retorno:: nenhum.
-  # Efeitos colaterais:: adiciona um erro no campo quando ele está preenchido, mas não é um valor válido.
   def validar_valor_numerico(campo, valor)
     errors.add(campo, "Informe um valor numérico válido") if public_send(campo).present? && valor.nil?
   end
->>>>>>> Stashed changes
 end

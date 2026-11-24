@@ -137,6 +137,33 @@ RSpec.describe Estudante, type: :model do
     end
   end
 
+  describe "#debitar" do
+    before { estudante.update!(saldo: 10) }
+
+    it "desconta o valor do saldo e devolve true" do
+      expect(estudante.debitar(BigDecimal("4.5"))).to be(true)
+      expect(estudante.reload.saldo).to eq(BigDecimal("5.5"))
+    end
+
+    it "aceita debitar o saldo inteiro" do
+      expect(estudante.debitar(10)).to be(true)
+      expect(estudante.reload.saldo).to eq(0)
+    end
+
+    it "com saldo insuficiente, não desconta nada e devolve false" do
+      expect(estudante.debitar(BigDecimal("10.01"))).to be(false)
+      expect(estudante.reload.saldo).to eq(10)
+    end
+
+    it "confere o saldo atual no banco, e não o de uma cópia desatualizada" do
+      desatualizado = described_class.find(estudante.id)
+      estudante.debitar(10)
+
+      expect(desatualizado.debitar(5)).to be(false)
+      expect(estudante.reload.saldo).to eq(0)
+    end
+  end
+
   it "tem as recargas removidas junto com ele" do
     estudante.save!
     estudante.recargas.create!(metodo: :cartao, status: :confirmada, valor: 10)

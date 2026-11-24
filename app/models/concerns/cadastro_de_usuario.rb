@@ -63,31 +63,20 @@ module CadastroDeUsuario
   def usuario
     @usuario ||= (editando ? Usuario.find(editando.usuario_id) : Usuario.new).tap do |usuario|
       usuario.assign_attributes(nome:, email:)
-      if usuario.new_record? || senha.present? || confirmacao_senha.present?
-        usuario.assign_attributes(senha:, senha_confirmation: confirmacao_senha)
-      end
+      usuario.assign_attributes(senha:, senha_confirmation: confirmacao_senha) if alterar_senha?
     end
   end
 
-<<<<<<< Updated upstream
-=======
-  # Diz se a senha do usuário deve ser trocada: sempre num cadastro novo e, na edição, só se a senha ou a
-  # confirmação foram preenchidas.
-  #
-  # Argumentos:: nenhum.
-  # Retorno:: +true+ ou +false+.
-  # Efeitos colaterais:: nenhum.
   def alterar_senha?
     editando.nil? || senha.present? || confirmacao_senha.present?
   end
-
+  
   # Especialização (Estudante ou Funcionario) que será gravada, já com os dados do formulário. Na edição,
   # também trabalha numa cópia lida do banco.
   #
   # Argumentos:: nenhum.
   # Retorno:: o Estudante ou Funcionario (novo ou lido do banco), memorizado entre as chamadas.
   # Efeitos colaterais:: nenhum no banco; na edição, faz uma consulta para ler a especialização.
->>>>>>> Stashed changes
   def especializacao
     @especializacao ||= (editando ? editando.class.find(editando.id) : nova_especializacao).tap do |especializacao|
       especializacao.assign_attributes(usuario:, **dados_da_especializacao)
