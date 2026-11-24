@@ -1,3 +1,5 @@
+# Formulário da recarga via cartão de crédito. Os dados do cartão são fictícios: passam por uma
+# conferência simples e não são guardados. Com dados válidos, o saldo é creditado na hora.
 class PagamentoCartao
   include ActiveModel::Model
   include ActiveModel::Attributes
@@ -58,18 +60,31 @@ class PagamentoCartao
     recarga.errors.each { |erro| errors.add(erro.attribute, erro.message) }
   end
 
-  # Validação dos dados do cartão: todos os campos são obrigatórios e cada um tem o seu formato.
+  # Validação dos dados do cartão: confere se todos foram preenchidos e o formato de cada campo preenchido.
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
   # Efeitos colaterais::
-  #   adiciona um erro geral e um erro em cada campo em branco, além dos erros de formato
-  #   (ver #validar_numero, #validar_validade e #validar_cvv).
+  #   adiciona em +errors+ os erros de preenchimento e de formato (ver #validar_preenchimento, #validar_numero,
+  #   #validar_validade e #validar_cvv).
   def validar_cartao
     validar_preenchimento
     validar_numero if numero_cartao.present?
     validar_validade if validade.present?
     validar_cvv if cvv.present?
+  end
+
+  # Confere se todos os dados do cartão foram preenchidos.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais::
+  #   quando algum campo está em branco, adiciona um erro geral (<tt>"Preencha todos os dados do cartão"</tt>) e
+  #   um erro em cada campo em branco.
+  def validar_preenchimento
+    em_branco = CAMPOS_DO_CARTAO.select { |campo| public_send(campo).blank? }
+    errors.add(:base, "Preencha todos os dados do cartão") if em_branco.any?
+    em_branco.each { |campo| errors.add(campo, "Campo obrigatório") }
   end
 
   # Confere se o número do cartão tem 16 dígitos (espaços são ignorados).
@@ -92,7 +107,7 @@ class PagamentoCartao
     errors.add(:cvv, "CVV inválido") unless cvv.strip.match?(/\A\d{3}\z/)
   end
 
-  # Confere o formato da validade e se o cartão ainda vale. O cartão vale até o último dia do mês da validade.
+  # Confere o formato da validade e se o cartão ainda vale (ver #fim_da_validade).
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
@@ -105,6 +120,18 @@ class PagamentoCartao
     elsif fim < Date.current
       errors.add(:validade, "Cartão vencido")
     end
+  end
+
+  # Último dia em que o cartão vale: o cartão vale até o fim do mês da validade.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   - +Date+ com o último dia do mês da validade (ex.: <tt>"12/30"</tt> dá 31/12/2030);
+  #   - +nil+ se a validade não está no formato MM/AA ou MM/AAAA ou se o mês não vai de 01 a 12.
+  # Efeitos colaterais:: nenhum.
+  def fim_da_validade
+    mes, ano = validade.strip.match(VALIDADE)&.captures&.map(&:to_i)
+    Date.new(ano_completo(ano), mes).end_of_month if (1..12).cover?(mes)
   end
 
   # Completa o ano da validade digitado com 2 dígitos.

@@ -36,6 +36,16 @@ module CodigoPix
     payload + crc16(payload)
   end
 
+  # Monta vários campos do BR Code em sequência, na ordem em que foram passados.
+  #
+  # Argumentos::
+  #   - +pares+: +Hash+ de ID do campo e conteúdo (ex.: <tt>{ "58" => "BR", "60" => "BRASILIA" }</tt>).
+  # Retorno:: +String+ com os campos montados um após o outro (ver #campo).
+  # Efeitos colaterais:: nenhum.
+  def campos(pares)
+    pares.map { |id, conteudo| campo(id, conteudo) }.join
+  end
+
   # Monta um campo do BR Code: ID (2 dígitos) + tamanho do conteúdo (2 dígitos) + conteúdo.
   #
   # Argumentos::

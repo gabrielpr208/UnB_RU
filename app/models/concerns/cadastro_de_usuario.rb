@@ -67,10 +67,16 @@ module CadastroDeUsuario
     end
   end
 
+  # Diz se a senha do usuário deve ser trocada: sempre num cadastro novo e, na edição, só se a senha ou a
+  # confirmação foram preenchidas.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: +true+ ou +false+.
+  # Efeitos colaterais:: nenhum.
   def alterar_senha?
     editando.nil? || senha.present? || confirmacao_senha.present?
   end
-  
+
   # Especialização (Estudante ou Funcionario) que será gravada, já com os dados do formulário. Na edição,
   # também trabalha numa cópia lida do banco.
   #

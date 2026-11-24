@@ -30,10 +30,25 @@ class Estudante < ApplicationRecord
     autenticar_por(matricula:, senha:)
   end
 
-  # Soma direto no banco (saldo = saldo + valor), sem perder créditos de pagamentos simultâneos.
+  # Soma um valor ao saldo do estudante.
+  #
+  # Argumentos::
+  #   - +valor+: quantia em reais a creditar.
+  # Retorno:: o próprio estudante, com o saldo atualizado.
+  # Efeitos colaterais:: atualiza +saldo+ e +updated_at+ do estudante no banco, numa única instrução SQL.
   def creditar!(valor)
     increment!(:saldo, valor, touch: true)
   end
+
+  # Desconta um valor do saldo do estudante, se houver saldo suficiente. Trava o registro durante a operação,
+  # para que duas cobranças ao mesmo tempo não deixem o saldo negativo.
+  #
+  # Argumentos::
+  #   - +valor+: quantia em reais a debitar.
+  # Retorno::
+  #   - +true+ se o valor foi debitado;
+  #   - +false+ se o saldo é menor que o valor.
+  # Efeitos colaterais:: atualiza +saldo+ no banco quando há saldo suficiente.
   def debitar(valor)
     with_lock do
       next false if saldo < valor

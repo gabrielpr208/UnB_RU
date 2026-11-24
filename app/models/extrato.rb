@@ -167,6 +167,13 @@ class Extrato
     errors.add(:valor_maximo, "O valor máximo não pode ser menor que o valor mínimo")
   end
 
+  # Confere se um campo da faixa de valor preenchido virou um número.
+  #
+  # Argumentos::
+  #   - +campo+: nome do campo (+:valor_minimo+ ou +:valor_maximo+).
+  #   - +valor+: valor já convertido do campo (+nil+ se a conversão falhou).
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: adiciona um erro no campo quando ele está preenchido, mas não é um valor válido.
   def validar_valor_numerico(campo, valor)
     errors.add(campo, "Informe um valor numérico válido") if public_send(campo).present? && valor.nil?
   end

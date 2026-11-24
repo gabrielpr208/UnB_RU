@@ -67,7 +67,7 @@ class Recarga < ApplicationRecord
 
   private
 
-  # Validação do valor: precisa ser informado, numérico e estar entre VALOR_MINIMO e VALOR_MAXIMO.
+  # Validação do valor da recarga (ver #erro_do_valor).
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
@@ -77,6 +77,13 @@ class Recarga < ApplicationRecord
     errors.add(:valor, mensagem) if mensagem
   end
 
+  # Confere o valor: precisa ser informado, numérico e estar entre VALOR_MINIMO e VALOR_MAXIMO.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   - +String+ com a mensagem de erro;
+  #   - +nil+ se o valor é válido.
+  # Efeitos colaterais:: nenhum.
   def erro_do_valor
     if valor_before_type_cast.blank?
       "Informe o valor da recarga"
