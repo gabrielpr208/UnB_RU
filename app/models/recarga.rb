@@ -45,14 +45,19 @@ class Recarga < ApplicationRecord
   private
 
   def validar_valor
+    mensagem = erro_do_valor
+    errors.add(:valor, mensagem) if mensagem
+  end
+
+  def erro_do_valor
     if valor_before_type_cast.blank?
-      errors.add(:valor, "Informe o valor da recarga")
+      "Informe o valor da recarga"
     elsif valor.nil?
-      errors.add(:valor, "Informe um valor numérico válido")
+      "Informe um valor numérico válido"
     elsif valor < VALOR_MINIMO
-      errors.add(:valor, "O valor mínimo de recarga é #{ValorMonetario.formatar(VALOR_MINIMO)}")
+      "O valor mínimo de recarga é #{ValorMonetario.formatar(VALOR_MINIMO)}"
     elsif valor > VALOR_MAXIMO
-      errors.add(:valor, "O valor máximo de recarga é #{ValorMonetario.formatar(VALOR_MAXIMO)}")
+      "O valor máximo de recarga é #{ValorMonetario.formatar(VALOR_MAXIMO)}"
     end
   end
 

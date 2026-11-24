@@ -22,6 +22,7 @@ RSpec.describe Recarga, type: :model do
       "abc" => "Informe um valor numérico válido",
       "-5" => "Informe um valor numérico válido",
       "" => "Informe o valor da recarga",
+      "   " => "Informe o valor da recarga",
       nil => "Informe o valor da recarga"
     }.each do |valor, mensagem|
       if mensagem
