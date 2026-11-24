@@ -15,6 +15,7 @@ class DocumentoPdf
   COR_BORDA = "DADCE0".freeze
   # Verde das entradas de dinheiro.
   COR_ENTRADA = "1E7B34".freeze
+  # Altura da faixa do rodapé, em pontos. A faixa começa essa mesma distância abaixo da margem inferior.
   ALTURA_DO_RODAPE = 20
 
   # Prepara um documento A4 em branco.
@@ -65,7 +66,7 @@ class DocumentoPdf
     raise NotImplementedError
   end
 
-  # Desenha o cabeçalho: nome do sistema, título do documento e uma linha divisória.
+  # Desenha o cabeçalho: nome do sistema, título do documento e uma linha divisória (ver #linha_divisoria).
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
@@ -78,6 +79,11 @@ class DocumentoPdf
     linha_divisoria
   end
 
+  # Desenha uma linha horizontal na largura da página, com um espaço abaixo.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF; a cor das linhas do documento passa a ser COR_BORDA.
   def linha_divisoria
     pdf.stroke_color COR_BORDA
     pdf.stroke_horizontal_rule
@@ -128,25 +134,45 @@ class DocumentoPdf
     pdf.move_down 16
   end
 
-  # Desenha, em todas as páginas, a data de geração e a numeração (ex.: "Página 1 de 3").
+  # Desenha o rodapé numa faixa logo abaixo da margem inferior, em todas as páginas: data de geração à esquerda
+  # e numeração à direita.
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
-  # Efeitos colaterais:: desenha no PDF.
+  # Efeitos colaterais:: desenha no PDF (ver #data_de_geracao e #numeracao_das_paginas).
   def rodape
     pdf.repeat(:all) { data_de_geracao }
     numeracao_das_paginas
   end
 
+  # Escreve a data e hora de geração do documento à esquerda da faixa do rodapé.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def data_de_geracao
     pdf.bounding_box([ pdf.bounds.left, topo_do_rodape ], width: pdf.bounds.width, height: ALTURA_DO_RODAPE) do
       pdf.text "Gerado em #{data_e_hora(gerado_em)}", size: 8, color: COR_TEXTO_SUAVE
     end
   end
 
+  # Numera as páginas à direita da faixa do rodapé (ex.: "Página 1 de 3").
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha a numeração em todas as páginas do PDF.
   def numeracao_das_paginas
     pdf.number_pages "Página <page> de <total>", at: [ pdf.bounds.right - 120, topo_do_rodape ],
                                                  width: 120, align: :right, size: 8, color: COR_TEXTO_SUAVE
+  end
+
+  # Posição vertical do topo da faixa do rodapé: ALTURA_DO_RODAPE pontos abaixo da margem inferior.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: +Numeric+ com a coordenada vertical, em pontos.
+  # Efeitos colaterais:: nenhum.
+  def topo_do_rodape
+    pdf.bounds.bottom - ALTURA_DO_RODAPE
   end
 
   # Formata um valor em reais (ver ValorMonetario.formatar).

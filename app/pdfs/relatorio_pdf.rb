@@ -27,7 +27,7 @@ class RelatorioPdf < DocumentoPdf
     "Relatório Global de Operação"
   end
 
-  # Desenha a tabela de totais por restaurante e a lista de acessos (ou um aviso, se não há nenhum).
+  # Desenha a tabela de totais por restaurante e a lista de acessos.
   #
   # Argumentos:: nenhum.
   # Retorno:: nenhum.
@@ -37,6 +37,12 @@ class RelatorioPdf < DocumentoPdf
     tabela_de_acessos
   end
 
+  # Desenha a seção de totais: o total de acessos de cada restaurante (ver RelatorioAcessos#totais_por_restaurante)
+  # e, na última linha, o total geral.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def tabela_de_totais
     totais = relatorio.totais_por_restaurante
 
@@ -46,6 +52,11 @@ class RelatorioPdf < DocumentoPdf
            larguras: [ 380, nil ], alinhar_a_direita: [ 1 ])
   end
 
+  # Desenha a seção de acessos, com uma linha por acesso (ver #linhas), ou um aviso quando não há nenhum.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def tabela_de_acessos
     subtitulo "Acessos"
     if relatorio.acessos.empty?

@@ -32,6 +32,12 @@ class ExtratosController < ApplicationController
 
   private
 
+  # Volta para a tela do extrato, mantendo os filtros.
+  #
+  # Argumentos::
+  #   - +alerta+: mensagem mostrada ao estudante.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: redireciona para o extrato com os mesmos filtros e o alerta.
   def voltar_ao_extrato(alerta)
     redirect_to extrato_path(filtros), alert: alerta
   end

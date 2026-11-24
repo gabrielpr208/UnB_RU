@@ -1,6 +1,9 @@
 # PDF do extrato do estudante (features/pdf_historico_estudante.feature): as mesmas movimentações e o mesmo
 # formato da tela do extrato, inclusive os filtros aplicados, com o resumo de entradas e saídas.
 class ExtratoPdf < DocumentoPdf
+  # Texto do filtro de tipo na descrição dos filtros. O tipo <tt>"todos"</tt> não aparece.
+  DESCRICAO_DO_TIPO = { "recargas" => "só recargas", "refeicoes" => "só refeições" }.freeze
+
   # Prepara o PDF de um extrato.
   #
   # Argumentos::
@@ -47,6 +50,12 @@ class ExtratoPdf < DocumentoPdf
     resumo
   end
 
+  # Desenha o nome, a matrícula e o saldo do estudante e quais movimentações o documento inclui
+  # (ver #descricao_dos_filtros).
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def dados_do_estudante
     dados(
       "Estudante" => estudante.nome,
@@ -56,11 +65,21 @@ class ExtratoPdf < DocumentoPdf
     )
   end
 
+  # Desenha a seção de movimentações, com uma linha por movimentação (ver #linhas).
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def tabela_de_movimentacoes
     subtitulo "Movimentações"
     tabela([ [ "MOVIMENTAÇÃO", "DATA E HORA", "VALOR" ], *linhas ], larguras: [ 250, 130, nil ], alinhar_a_direita: [ 2 ])
   end
 
+  # Desenha a seção de resumo: total de entradas, total de saídas e quantidade de movimentações.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def resumo
     subtitulo "Resumo"
     dados(
@@ -108,6 +127,13 @@ class ExtratoPdf < DocumentoPdf
     "filtradas (#{partes.compact.join(', ')})"
   end
 
+  # Partes da descrição dos filtros que falam do período.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   +Array+ de +String+ com a data inicial e a data final preenchidas (ex.: <tt>["a partir de 01/03/2026"]</tt>);
+  #   vazio quando não há período.
+  # Efeitos colaterais:: nenhum.
   def descricao_do_periodo
     partes = []
     partes << "a partir de #{data(extrato.data_inicial)}" if extrato.data_inicial
@@ -115,7 +141,14 @@ class ExtratoPdf < DocumentoPdf
     partes
   end
 
-  # O controller só gera o PDF com filtros válidos, então minimo e maximo só são nil quando estão em branco.
+  # Partes da descrição dos filtros que falam da faixa de valor. O controller só gera o PDF com filtros válidos,
+  # então Extrato#minimo e Extrato#maximo só são +nil+ quando estão em branco.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   +Array+ de +String+ com o valor mínimo e o valor máximo preenchidos
+  #   (ex.: <tt>["valor mínimo de R$ 4,00"]</tt>); vazio quando não há faixa de valor.
+  # Efeitos colaterais:: nenhum.
   def descricao_da_faixa_de_valor
     partes = []
     partes << "valor mínimo de #{reais(extrato.minimo)}" if extrato.minimo

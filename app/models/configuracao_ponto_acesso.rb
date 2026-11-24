@@ -93,7 +93,6 @@ class ConfiguracaoPontoAcesso
   #   - +String+ com a mensagem de erro;
   #   - +nil+ se o número é válido ou se o restaurante não foi encontrado (esse erro já aparece no restaurante).
   # Efeitos colaterais:: nenhum.
-
   def erro_da_catraca
     if numero_da_catraca.blank?
       "Informe o número da catraca"

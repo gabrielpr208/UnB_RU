@@ -65,6 +65,14 @@ class ValidacaoEntrada
     @preco ||= PrecoRefeicao.vigente(@agora)
   end
 
+  # Cobra a refeição do estudante e registra o acesso na catraca.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   - o Acesso criado, se a cobrança deu certo;
+  #   - +false+ se o saldo é insuficiente.
+  # Efeitos colaterais::
+  #   numa mesma transação, desconta o preço do saldo do estudante e cria um Acesso no banco.
   def cobrar
     Estudante.transaction do
       next false unless estudante.debitar(preco)
