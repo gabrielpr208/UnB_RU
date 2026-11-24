@@ -1,3 +1,4 @@
+# Estudante da UnB, que entra no Portal do Estudante com a matrícula e paga as refeições com o saldo.
 class Estudante < ApplicationRecord
   include EspecializacaoDeUsuario
 
@@ -16,14 +17,23 @@ class Estudante < ApplicationRecord
 
   validates :saldo, numericality: { greater_than_or_equal_to: 0 }
 
+  # Autentica o estudante pela matrícula e senha (ver EspecializacaoDeUsuario::ClassMethods#autenticar_por).
+  #
+  # Argumentos::
+  #   - +matricula+: matrícula digitada.
+  #   - +senha+: senha digitada.
+  # Retorno::
+  #   - o Estudante, se a matrícula existe e a senha confere;
+  #   - +nil+ caso contrário.
+  # Efeitos colaterais:: nenhum (apenas consulta o banco).
   def self.autenticar(matricula:, senha:)
     autenticar_por(matricula:, senha:)
   end
 
+  # Soma direto no banco (saldo = saldo + valor), sem perder créditos de pagamentos simultâneos.
   def creditar!(valor)
     increment!(:saldo, valor, touch: true)
   end
-
   def debitar(valor)
     with_lock do
       next false if saldo < valor

@@ -7,5 +7,12 @@ class Acesso < ApplicationRecord
   validates :data_hora, presence: true
   validates :valor_cobrado, numericality: { greater_than: 0 }
 
+  ##
+  # :singleton-method: mais_recentes
+  # Ordena os acessos do mais recente para o mais antigo.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: <tt>ActiveRecord::Relation</tt> de Acesso, ordenada por +data_hora+ decrescente.
+  # Efeitos colaterais:: nenhum.
   scope :mais_recentes, -> { order(data_hora: :desc) }
 end

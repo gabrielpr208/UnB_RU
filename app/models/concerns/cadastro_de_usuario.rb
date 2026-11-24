@@ -1,11 +1,11 @@
 # Formulário que grava um Usuario junto com a especialização dele (Estudante ou Funcionario, ver
 # EspecializacaoDeUsuario): os dois são gravados juntos ou nenhum é, e os erros de ambos aparecem no formulário.
 #
-# Sem `editando`, cadastra um usuário novo. Com `editando` (uma especialização já gravada), altera os dados dela
+# Sem +editando+, cadastra um usuário novo. Com +editando+ (uma especialização já gravada), altera os dados dela
 # e do usuário dela; na edição, senha em branco mantém a senha atual.
 #
-# Quem inclui declara os atributos próprios do perfil e implementa #nova_especializacao (registro vazio)
-# e #dados_da_especializacao (atributos do perfil vindos do formulário).
+# Quem inclui declara os atributos próprios do perfil e implementa +nova_especializacao+ (registro vazio)
+# e +dados_da_especializacao+ (atributos do perfil vindos do formulário).
 module CadastroDeUsuario
   extend ActiveSupport::Concern
 
@@ -27,6 +27,17 @@ module CadastroDeUsuario
     validate :validar_modelos
   end
 
+  # Valida o formulário e grava o usuário e a especialização numa mesma transação.
+  #
+  # Se outra requisição gravar o mesmo identificador ou e-mail depois da validação, o formulário é validado
+  # de novo, do zero, para mostrar qual campo ficou repetido.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   - +true+ se os dois registros foram gravados;
+  #   - +false+ se algum dado é inválido (os motivos ficam em +errors+).
+  # Efeitos colaterais::
+  #   cria ou altera o Usuario e o Estudante/Funcionario no banco. Em caso de falha, nada é gravado.
   def save
     return false unless valid?
 
@@ -36,8 +47,6 @@ module CadastroDeUsuario
     end
     true
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
-    # Outra requisição gravou o mesmo identificador ou e-mail depois da validação:
-    # valida de novo, do zero, para mostrar no formulário qual campo ficou repetido.
     @usuario = @especializacao = nil
     valid?
     false
@@ -45,7 +54,12 @@ module CadastroDeUsuario
 
   private
 
-  # Na edição, trabalha numa cópia lida do banco: o registro recebido em `editando` não muda se a gravação falhar.
+  # Usuario que será gravado, já com os dados do formulário. Na edição, trabalha numa cópia lida do banco:
+  # o registro recebido em +editando+ não muda se a gravação falhar.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: o Usuario (novo ou lido do banco), memorizado entre as chamadas.
+  # Efeitos colaterais:: nenhum no banco; na edição, faz uma consulta para ler o usuário.
   def usuario
     @usuario ||= (editando ? Usuario.find(editando.usuario_id) : Usuario.new).tap do |usuario|
       usuario.assign_attributes(nome:, email:)
@@ -56,13 +70,26 @@ module CadastroDeUsuario
   def alterar_senha?
     editando.nil? || senha.present? || confirmacao_senha.present?
   end
-
+  
+  # Especialização (Estudante ou Funcionario) que será gravada, já com os dados do formulário. Na edição,
+  # também trabalha numa cópia lida do banco.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: o Estudante ou Funcionario (novo ou lido do banco), memorizado entre as chamadas.
+  # Efeitos colaterais:: nenhum no banco; na edição, faz uma consulta para ler a especialização.
   def especializacao
     @especializacao ||= (editando ? editando.class.find(editando.id) : nova_especializacao).tap do |especializacao|
       especializacao.assign_attributes(usuario:, **dados_da_especializacao)
     end
   end
 
+  # Validação que confere o Usuario e a especialização e traz os erros dos dois para o formulário.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais::
+  #   adiciona em +errors+ cada erro dos modelos, no campo correspondente do formulário
+  #   (ver CAMPOS_DO_FORMULARIO).
   def validar_modelos
     [ usuario, especializacao ].each do |modelo|
       next if modelo.valid?

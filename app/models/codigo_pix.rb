@@ -1,9 +1,25 @@
+# Monta um "Pix copia e cola" no layout do BR Code do Banco Central, só para ilustrar a recarga.
+#
+# A chave Pix é um UUID sorteado na hora, que não está cadastrado em banco nenhum: o código tem a
+# aparência de um Pix de verdade, mas um app de banco não consegue pagar para ele.
+#
+# As funções são chamadas direto no módulo (ex.: <tt>CodigoPix.gerar(valor: 20)</tt>).
 module CodigoPix
+  # Nome do recebedor que aparece no app do banco ao ler o código.
   NOME_DO_RECEBEDOR = "RU UNB DEMONSTRACAO".freeze
+  # Cidade do recebedor que aparece no app do banco ao ler o código.
   CIDADE_DO_RECEBEDOR = "BRASILIA".freeze
 
   module_function
 
+  # Gera o código "Pix copia e cola" de uma recarga.
+  #
+  # Argumentos::
+  #   - +valor+: valor da recarga em reais (ex.: +20+ ou <tt>BigDecimal("20.5")</tt>).
+  #   - +chave+: chave Pix do recebedor (padrão: um UUID aleatório).
+  #   - +identificador+: identificador da transação (padrão: 25 caracteres alfanuméricos aleatórios).
+  # Retorno:: +String+ com o payload do BR Code, terminado pelo CRC16.
+  # Efeitos colaterais:: nenhum.
   def gerar(valor:, chave: SecureRandom.uuid, identificador: SecureRandom.alphanumeric(25))
     payload = campos(
       "00" => "01",
@@ -20,14 +36,23 @@ module CodigoPix
     payload + crc16(payload)
   end
 
-  def campos(pares)
-    pares.map { |id, conteudo| campo(id, conteudo) }.join
-  end
-
+  # Monta um campo do BR Code: ID (2 dígitos) + tamanho do conteúdo (2 dígitos) + conteúdo.
+  #
+  # Argumentos::
+  #   - +id+: identificador do campo (ex.: <tt>"54"</tt> para o valor).
+  #   - +conteudo+: texto do campo.
+  # Retorno:: +String+ com o campo montado (ex.: <tt>campo("58", "BR")</tt> devolve <tt>"5802BR"</tt>).
+  # Efeitos colaterais:: nenhum.
   def campo(id, conteudo)
     "#{id}#{conteudo.length.to_s.rjust(2, "0")}#{conteudo}"
   end
 
+  # Calcula o CRC16-CCITT (polinômio 0x1021, valor inicial 0xFFFF), usado como dígito verificador do BR Code.
+  #
+  # Argumentos::
+  #   - +texto+: payload do BR Code até o ID e o tamanho do campo do CRC (<tt>"6304"</tt>).
+  # Retorno:: +String+ com o CRC em 4 dígitos hexadecimais maiúsculos.
+  # Efeitos colaterais:: nenhum.
   def crc16(texto)
     crc = 0xFFFF
 
