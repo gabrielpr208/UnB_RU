@@ -1,6 +1,13 @@
 # PDF do Relatório Global de Operação (features/pdf_relatorio.feature): o total de acessos de cada restaurante,
 # inclusive os sem acessos, com o total geral, e todos os acessos, do mais recente para o mais antigo.
 class RelatorioPdf < DocumentoPdf
+  # Prepara o PDF do relatório.
+  #
+  # Argumentos::
+  #   - +relatorio+: RelatorioAcessos com os acessos listados (padrão: todos, sem filtros).
+  #   - demais opções de DocumentoPdf.new (ex.: +gerado_em+).
+  # Retorno:: o documento, pronto para #render.
+  # Efeitos colaterais:: nenhum.
   def initialize(relatorio = RelatorioAcessos.new, **)
     @relatorio = relatorio
     super(**)
@@ -8,12 +15,23 @@ class RelatorioPdf < DocumentoPdf
 
   private
 
+  # Relatório exportado.
   attr_reader :relatorio
 
+  # Título do documento.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: <tt>"Relatório Global de Operação"</tt>.
+  # Efeitos colaterais:: nenhum.
   def titulo
     "Relatório Global de Operação"
   end
 
+  # Desenha a tabela de totais por restaurante e a lista de acessos (ou um aviso, se não há nenhum).
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: desenha no PDF.
   def conteudo
     totais = relatorio.totais_por_restaurante
 
@@ -30,6 +48,11 @@ class RelatorioPdf < DocumentoPdf
     end
   end
 
+  # Linhas da tabela de acessos.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: +Array+ com uma linha por acesso: matrícula, restaurante, catraca e data e hora.
+  # Efeitos colaterais:: nenhum.
   def linhas
     relatorio.acessos.map do |acesso|
       [ acesso.estudante.matricula, acesso.catraca.restaurante.nome, acesso.catraca.identificador,

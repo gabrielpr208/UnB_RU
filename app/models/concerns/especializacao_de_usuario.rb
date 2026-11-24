@@ -11,10 +11,21 @@ module EspecializacaoDeUsuario
     delegate :nome, :email, to: :usuario
   end
 
-  class_methods do
+  # Métodos de classe adicionados a quem inclui EspecializacaoDeUsuario.
+  module ClassMethods
     private
 
-    # Devolve o registro dono do identificador (ex.: matricula: "231012345") se a senha conferir; nil caso contrário.
+    # Autentica pelo identificador do perfil e pela senha do usuário. Mesmo quando o identificador não existe,
+    # calcula um hash de senha, para que o tempo de resposta não revele quais identificadores estão cadastrados.
+    #
+    # Argumentos::
+    #   - +senha+: senha digitada.
+    #   - +identificador+: um único par coluna/valor (ex.: <tt>matricula: "231012345"</tt>).
+    # Retorno::
+    #   - o registro dono do identificador, se a senha conferir;
+    #   - +nil+ se o identificador ou a senha estão em branco, se o identificador não existe ou se a senha
+    #     está errada.
+    # Efeitos colaterais:: nenhum (apenas consulta o banco).
     def autenticar_por(senha:, **identificador)
       coluna, valor = identificador.sole
       return if valor.blank? || senha.blank?
@@ -24,13 +35,17 @@ module EspecializacaoDeUsuario
       if registro
         registro if registro.usuario.authenticate_senha(senha)
       else
-        # Calcula um hash mesmo assim, para que o tempo de resposta não revele quais identificadores existem.
         Usuario.new(senha:)
         nil
       end
     end
   end
 
+  # Primeiro nome do usuário, usado nas saudações das telas.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: +String+ com a primeira palavra do nome (ex.: <tt>"Maria"</tt> para <tt>"Maria Souza"</tt>).
+  # Efeitos colaterais:: nenhum.
   def primeiro_nome
     nome.split.first
   end

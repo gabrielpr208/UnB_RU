@@ -10,7 +10,14 @@ class Cardapio < ApplicationRecord
   validates :data, presence: true
   validates :refeicao, uniqueness: { scope: :data }
 
-  # Prato da variante pedida, ou nil se a opção não foi cadastrada.
+  # Busca o prato principal de uma variante do cardápio.
+  #
+  # Argumentos::
+  #   - +variante+: variante do prato (ex.: +:padrao+, +:vegetariano_estrito+), como símbolo ou texto.
+  # Retorno::
+  #   - +String+ com a descrição do prato principal da variante;
+  #   - +nil+ se a opção não foi cadastrada.
+  # Efeitos colaterais:: nenhum.
   def prato(variante)
     itens.find { |item| item.prato_principal? && item.variante == variante.to_s }&.descricao
   end

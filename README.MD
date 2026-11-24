@@ -22,3 +22,13 @@ Resultado ABC Score:
     20.2: ExtratosController#pdf           app/controllers/extratos_controller.rb:10-20
     20.2: ConfiguracaoPontoAcesso#validar_catraca app/models/configuracao_ponto_acesso.rb:48-56
     20.2: CadastroDeUsuario#usuario        app/models/concerns/cadastro_de_usuario.rb:49-56
+
+# Documentação
+
+A documentação do código é gerada com o [RDoc](https://github.com/ruby/rdoc) a partir dos comentários das classes e
+métodos em `app/`. Cada método descreve o que faz, os argumentos, o retorno e os efeitos colaterais.
+
+    bundle exec rdoc      # gera o HTML em doc/ (abra doc/index.html)
+    bundle exec rdoc -C   # só mostra a cobertura da documentação, sem gerar arquivos
+
+As opções ficam em `.rdoc_options` e os arquivos documentados, em `.document`. A pasta `doc/` não vai para o git.
