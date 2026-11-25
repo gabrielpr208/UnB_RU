@@ -6,7 +6,7 @@ Funcionalidade: Visualizar cardápio da refeição atual
   Para saber o que será servido antes de ir ao restaurante
 
   Regras de negócio:
-  - Horários: café da manhã 07:00–09:00, almoço 11:00–14:30, jantar 17:00–19:30 (início e fim inclusivos)
+  - Horários: café da manhã 06:00–10:59, almoço 11:00–16:59, jantar 17:00–22:00 (início e fim inclusivos)
   - O cardápio exibido é o da refeição atual, no dia atual
   - Fora do horário de refeição, o sistema informa a próxima refeição
   - Opções não cadastradas aparecem como indisponíveis
@@ -29,12 +29,12 @@ Funcionalidade: Visualizar cardápio da refeição atual
 
     Exemplos:
       | horario | refeicao      |
-      | 07:00   | Café da manhã |
-      | 09:00   | Café da manhã |
+      | 06:00   | Café da manhã |
+      | 10:59   | Café da manhã |
       | 11:00   | Almoço        |
-      | 14:30   | Almoço        |
+      | 16:59   | Almoço        |
       | 17:00   | Jantar        |
-      | 19:30   | Jantar        |
+      | 22:00   | Jantar        |
 
   Cenário: Ver as três opções da refeição atual (feliz)
     Dado que agora são 12:00 de 16/10/2026
@@ -55,12 +55,8 @@ Funcionalidade: Visualizar cardápio da refeição atual
 
     Exemplos:
       | horario | proxima                         |
-      | 06:59   | Café da manhã às 07:00          |
-      | 09:01   | Almoço às 11:00                 |
-      | 10:59   | Almoço às 11:00                 |
-      | 14:31   | Jantar às 17:00                 |
-      | 16:59   | Jantar às 17:00                 |
-      | 19:31   | Café da manhã de amanhã às 07:00 |
+      | 05:59   | Café da manhã às 06:00          |
+      | 22:01   | Café da manhã de amanhã às 06:00|
 
   # ---------- Cardápio incompleto ou ausente ----------
 
