@@ -66,7 +66,7 @@ RSpec.describe ValidacaoEntrada, type: :model do
   end
 
   it "recusa a entrada fora do horário" do
-    validacao = validar("231012345", agora: Time.zone.local(2026, 10, 16, 22))
+    validacao = validar("231012345", agora: Time.zone.local(2026, 10, 16, 22, 1))
 
     expect(validacao).not_to be_liberada
     expect(validacao.mensagem).to eq("Fora do horário de refeição")

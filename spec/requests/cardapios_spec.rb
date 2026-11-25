@@ -49,12 +49,12 @@ RSpec.describe "Cardápio", type: :request do
     end
 
     {
-      "07:00" => "Café da manhã",
-      "09:00" => "Café da manhã",
+      "06:00" => "Café da manhã",
+      "10:59" => "Café da manhã",
       "11:00" => "Almoço",
-      "14:30" => "Almoço",
+      "16:59" => "Almoço",
       "17:00" => "Jantar",
-      "19:30" => "Jantar"
+      "22:00" => "Jantar"
     }.each do |horario, refeicao|
       it "às #{horario} mostra o cardápio do #{refeicao}" do
         em(horario) { get cardapio_path }
@@ -85,12 +85,9 @@ RSpec.describe "Cardápio", type: :request do
     end
 
     {
-      "06:59" => "Café da manhã às 07:00",
-      "09:01" => "Almoço às 11:00",
-      "10:59" => "Almoço às 11:00",
-      "14:31" => "Jantar às 17:00",
-      "16:59" => "Jantar às 17:00",
-      "19:31" => "Café da manhã de amanhã às 07:00"
+      "05:59" => "Café da manhã às 06:00",
+      "22:01" => "Café da manhã de amanhã às 06:00",
+      "00:00" => "Café da manhã às 06:00"
     }.each do |horario, proxima|
       it "às #{horario} informa que não há refeição e que a próxima é \"#{proxima}\"" do
         em(horario) { get cardapio_path }
