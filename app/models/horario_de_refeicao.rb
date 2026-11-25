@@ -1,12 +1,12 @@
 # Horários das refeições dos restaurantes universitários. Início e fim são inclusivos e a comparação é
-# feita por minuto: 09:00 ainda é café da manhã, 09:01 já não é.
+# feita por minuto: 10:59 ainda é café da manhã, 11:00 já não é.
 class HorarioDeRefeicao
   # Horário de uma refeição. +inicio+ e +fim+ são minutos contados a partir da meia-noite (ex.: 420 = 07:00).
   class Janela < Data.define(:refeicao, :nome, :inicio, :fim)
     # Horário de início da refeição no formato HH:MM.
     #
     # Argumentos:: nenhum.
-    # Retorno:: +String+ com o horário (ex.: <tt>"07:00"</tt>).
+    # Retorno:: +String+ com o horário (ex.: <tt>"06:00"</tt>).
     # Efeitos colaterais:: nenhum.
     def horario_de_inicio
       format("%02d:%02d", *inicio.divmod(60))
@@ -18,7 +18,7 @@ class HorarioDeRefeicao
     # Texto que avisa quando será a próxima refeição.
     #
     # Argumentos:: nenhum.
-    # Retorno:: +String+ como <tt>"Almoço às 11:00"</tt> ou <tt>"Café da manhã de amanhã às 07:00"</tt>.
+    # Retorno:: +String+ como <tt>"Almoço às 11:00"</tt> ou <tt>"Café da manhã de amanhã às 06:00"</tt>.
     # Efeitos colaterais:: nenhum.
     def descricao
       "#{janela.nome} #{"de amanhã " if amanha}às #{janela.horario_de_inicio}"
@@ -27,9 +27,9 @@ class HorarioDeRefeicao
 
   # As refeições do dia, em ordem de horário.
   JANELAS = [
-    Janela.new(refeicao: "cafe_da_manha", nome: "Café da manhã", inicio: 7 * 60, fim: 9 * 60),
-    Janela.new(refeicao: "almoco", nome: "Almoço", inicio: 11 * 60, fim: 14 * 60 + 30),
-    Janela.new(refeicao: "jantar", nome: "Jantar", inicio: 17 * 60, fim: 19 * 60 + 30)
+    Janela.new(refeicao: "cafe_da_manha", nome: "Café da manhã", inicio: 6 * 60, fim: 10 * 60 + 59),
+    Janela.new(refeicao: "almoco", nome: "Almoço", inicio: 11 * 60, fim: 16 * 60 + 59),
+    Janela.new(refeicao: "jantar", nome: "Jantar", inicio: 17 * 60, fim: 22 * 60)
   ].freeze
 
   # Refeição sendo servida num horário.
