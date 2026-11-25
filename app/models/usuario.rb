@@ -1,5 +1,9 @@
+# Conta de acesso ao sistema, com nome, e-mail e senha. É especializada em Estudante ou Funcionario
+# (ver EspecializacaoDeUsuario).
 class Usuario < ApplicationRecord
+  # Quantidade mínima de caracteres da senha.
   TAMANHO_MINIMO_SENHA = 6
+  # Maior senha, em bytes, que o bcrypt consegue usar por inteiro.
   TAMANHO_MAXIMO_SENHA_BYTES = ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
 
   has_secure_password :senha, validations: false, reset_token: false
@@ -27,6 +31,11 @@ class Usuario < ApplicationRecord
 
   private
 
+  # Validação do tamanho máximo da senha: o bcrypt ignora o que passa de TAMANHO_MAXIMO_SENHA_BYTES.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: adiciona um erro em +senha+ quando ela é longa demais.
   def senha_dentro_do_limite_do_bcrypt
     return if senha.blank? || senha.bytesize <= TAMANHO_MAXIMO_SENHA_BYTES
 

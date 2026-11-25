@@ -1,0 +1,59 @@
+<%= render "cabecalho", titulo: "Funcionários",
+                        subtitulo: "Funcionários que entram na Aplicação de Controle com o SIAPE e a senha." %>
+
+<section class="cartao" aria-labelledby="titulo-funcionarios">
+  <header class="cartao__cabecalho">
+    <h2 class="cartao__titulo" id="titulo-funcionarios">Funcionários cadastrados</h2>
+    <%= link_to new_controle_funcionario_path, class: "botao botao--primario botao--pequeno" do %>
+      <%= icone :adicionar %> Novo funcionário
+    <% end %>
+  </header>
+
+  <table class="tabela" id="funcionarios">
+    <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">SIAPE</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Perfil</th>
+        <th scope="col"><span class="visualmente-oculto">Ações</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @funcionarios.each do |funcionario| %>
+        <% proprio = funcionario == @funcionario_logado %>
+        <tr>
+          <td class="tabela__destaque">
+            <%= funcionario.nome %>
+            <% if proprio %><span class="selo">Você</span><% end %>
+          </td>
+          <td><%= funcionario.siape %></td>
+          <td class="tabela__quebravel"><%= funcionario.email %></td>
+          <td>
+            <span class="selo<%= " selo--primario" if funcionario.administrador? %>">
+              <%= papel_do_funcionario(funcionario) %>
+            </span>
+          </td>
+          <td>
+            <div class="tabela__acoes">
+              <%= link_to edit_controle_funcionario_path(funcionario), class: "botao botao--secundario botao--pequeno",
+                          aria: { label: "Editar #{funcionario.nome}" } do %>
+                <%= icone :editar %> Editar
+              <% end %>
+              <%# Ninguém remove a própria conta (ver Funcionario#remover). %>
+              <% unless proprio %>
+                <%= button_to controle_funcionario_path(funcionario), method: :delete,
+                              class: "botao botao--perigo botao--pequeno",
+                              aria: { label: "Remover #{funcionario.nome}" },
+                              form: { data: { turbo_confirm: "Remover o funcionário #{funcionario.nome}? " \
+                                                             "Ele não poderá mais entrar na Aplicação de Controle." } } do %>
+                  <%= icone :remover %> Remover
+                <% end %>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

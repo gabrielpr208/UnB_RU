@@ -1,14 +1,27 @@
+# Login e logout do estudante no Portal do Estudante, com a matrícula e a senha. O login aceita até 10
+# tentativas a cada 3 minutos.
 class SessoesController < ApplicationController
-  # Sair não exige ser estudante: um funcionário logado também pode encerrar a sessão por aqui.
   permitir_acesso_sem_login
   before_action :redirecionar_se_logado, only: %i[ new create ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: lambda {
     redirect_to login_path, alert: MENSAGEM_DE_MUITAS_TENTATIVAS
   }
 
+  # Mostra o formulário de login do estudante.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: renderiza a view +new+.
   def new
   end
 
+  # Autentica o estudante pela matrícula e senha e abre a sessão.
+  #
+  # Argumentos:: nenhum; a matrícula e a senha vêm de <tt>params[:login]</tt> (ver #credenciais).
+  # Retorno:: nenhum.
+  # Efeitos colaterais::
+  #   com credenciais corretas, cria a Sessao no banco, grava o cookie e redireciona para a página que o
+  #   estudante tentou abrir (ou a inicial); senão, renderiza o formulário com o erro (status 422).
   def create
     estudante = Estudante.autenticar(matricula: credenciais[:matricula], senha: credenciais[:senha])
 
@@ -22,6 +35,11 @@ class SessoesController < ApplicationController
     end
   end
 
+  # Faz o logout do estudante.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais:: apaga a sessão do banco, remove o cookie e redireciona para o login.
   def destroy
     encerrar_sessao
     redirect_to login_path, notice: "Você saiu da sua conta", status: :see_other
@@ -29,6 +47,11 @@ class SessoesController < ApplicationController
 
   private
 
+  # Dados permitidos do formulário de login.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: <tt>ActionController::Parameters</tt> com +matricula+ e +senha+, memorizado entre as chamadas.
+  # Efeitos colaterais:: responde 400 (Bad Request) se os parâmetros não tiverem o formato esperado.
   def credenciais
     @credenciais ||= params.expect(login: [ :matricula, :senha ])
   end

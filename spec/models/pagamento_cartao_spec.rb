@@ -34,6 +34,10 @@ RSpec.describe PagamentoCartao, type: :model do
       expect(pagamento(validade: "12/30").save).to be(true)
     end
 
+    it "aceita a validade com espaços em volta" do
+      expect(pagamento(validade: " 12/2030 ").save).to be(true)
+    end
+
     it "aceita um cartão que vence no mês atual" do
       travel_to(Time.zone.local(2026, 11, 30, 23, 59))
 
@@ -65,6 +69,7 @@ RSpec.describe PagamentoCartao, type: :model do
     "cartão vencido" => [ { validade: "09/2026" }, :validade, "Cartão vencido" ],
     "cartão vencido no mês anterior" => [ { validade: "10/2026" }, :validade, "Cartão vencido" ],
     "mês inexistente" => [ { validade: "13/2030" }, :validade, "Validade inválida. Use o formato MM/AAAA" ],
+    "mês zero" => [ { validade: "00/2030" }, :validade, "Validade inválida. Use o formato MM/AAAA" ],
     "validade fora do formato" => [ { validade: "2030-12" }, :validade, "Validade inválida. Use o formato MM/AAAA" ],
     "CVV com 2 dígitos" => [ { cvv: "12" }, :cvv, "CVV inválido" ],
     "CVV com 4 dígitos" => [ { cvv: "1234" }, :cvv, "CVV inválido" ],
@@ -80,6 +85,30 @@ RSpec.describe PagamentoCartao, type: :model do
       subject { pagamento(**alteracoes) }
 
       include_examples "pagamento recusado", campo, mensagem
+    end
+  end
+
+  it "com os dados do cartão em branco, só pede o preenchimento, sem conferir o formato" do
+    em_branco = pagamento(numero_cartao: "", validade: " ", cvv: nil)
+
+    expect(em_branco).not_to be_valid
+    expect(em_branco.errors.to_hash).to eq(
+      base: [ "Preencha todos os dados do cartão" ],
+      numero_cartao: [ "Campo obrigatório" ],
+      validade: [ "Campo obrigatório" ],
+      cvv: [ "Campo obrigatório" ]
+    )
+  end
+
+  {
+    "13/2030" => "Validade inválida. Use o formato MM/AAAA",
+    "09/2026" => "Cartão vencido"
+  }.each do |validade, mensagem|
+    it "com a validade #{validade}, informa só \"#{mensagem}\"" do
+      invalido = pagamento(validade:)
+
+      expect(invalido).not_to be_valid
+      expect(invalido.errors.to_hash).to eq(validade: [ mensagem ])
     end
   end
 

@@ -53,7 +53,7 @@ RSpec.describe "Gestão de restaurantes", type: :request do
       delete logout_controle_path
       entrar_como_funcionario(administrador)
       get controle_path
-      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso", "Operar catraca", "Histórico", "Restaurantes", "Catracas", "Relatório" ])
+      expect(html.css(".abas__item").map(&:text)).to eq([ "Início", "Ponto de acesso", "Operar catraca", "Histórico", "Restaurantes", "Catracas", "Funcionários", "Relatório" ])
     end
   end
 

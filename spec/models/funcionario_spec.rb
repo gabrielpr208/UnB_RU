@@ -139,4 +139,44 @@ RSpec.describe Funcionario, type: :model do
 
     expect { usuario.destroy }.to change(described_class, :count).by(-1)
   end
+
+  describe ".em_ordem" do
+    it "ordena pelo nome do usuário" do
+      criar_funcionario(siape: "1111111", email: "z@unb.br").usuario.update!(nome: "Zélia Rocha")
+      criar_funcionario(siape: "2222222", email: "a@unb.br").usuario.update!(nome: "Ana Lima")
+
+      expect(described_class.em_ordem.map(&:nome)).to eq([ "Ana Lima", "Zélia Rocha" ])
+    end
+  end
+
+  describe "#remover" do
+    let!(:administrador) { criar_funcionario(siape: "7654321", email: "admin@unb.br", administrador: true) }
+
+    before { funcionario.save! }
+
+    it "remove o funcionário, o usuário e as sessões dele" do
+      usuario.sessoes.create!
+
+      expect { expect(funcionario.remover(responsavel: administrador)).to be_truthy }
+        .to change(described_class, :count).by(-1)
+        .and change(Usuario, :count).by(-1)
+        .and change(Sessao, :count).by(-1)
+    end
+
+    it "libera a catraca em que o funcionário estava operando" do
+      catraca = catraca_padrao
+      PontoAcesso.abrir!(funcionario:, catraca:)
+
+      funcionario.remover(responsavel: administrador)
+
+      expect(catraca.reload).not_to be_em_uso
+    end
+
+    it "não remove a própria conta de quem está removendo" do
+      expect { expect(administrador.remover(responsavel: administrador)).to be(false) }
+        .not_to change(described_class, :count)
+
+      expect(administrador.errors[:base]).to eq([ "Você não pode remover a sua própria conta" ])
+    end
+  end
 end

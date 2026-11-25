@@ -61,10 +61,14 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Gera a documentação do código a partir dos comentários [https://github.com/ruby/rdoc]
+  gem "rdoc", require: false
 end
 
 group :test do
   gem "cucumber-rails", require: false
+  gem 'simplecov', require: false
   gem "capybara"
   gem "database_cleaner-active_record"
 

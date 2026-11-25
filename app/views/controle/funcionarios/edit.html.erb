@@ -1,0 +1,18 @@
+<%= render "cabecalho", titulo: "Editar funcionário",
+                        subtitulo: "Altere os dados, a senha ou o perfil de acesso do funcionário." %>
+
+<div class="grade-cadastro">
+  <section class="cartao" aria-labelledby="titulo-formulario">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-formulario">Dados do funcionário</h2>
+      <span class="selo">A senha só muda se uma nova for informada</span>
+    </header>
+
+    <%= render "formulario", cadastro: @cadastro, url: controle_funcionario_path(@funcionario), method: :patch,
+                             botao: "Salvar alterações" %>
+  </section>
+
+  <aside class="coluna-lateral">
+    <%= render "perfis" %>
+  </aside>
+</div>

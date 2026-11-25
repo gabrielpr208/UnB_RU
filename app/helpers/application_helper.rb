@@ -1,4 +1,6 @@
+# Apoio às views de todo o sistema: ícones, formatação de valores e datas, abas de navegação e QR Code.
 module ApplicationHelper
+  # Desenho SVG (conteúdo da tag +svg+, em grade 24x24) de cada ícone usado nas telas.
   ICONES = {
     usuario: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
     matricula: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/>' \
@@ -35,6 +37,13 @@ module ApplicationHelper
     local: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'
   }.freeze
 
+  # Desenha um ícone SVG decorativo, escondido dos leitores de tela.
+  #
+  # Argumentos::
+  #   - +nome+: nome do ícone em ICONES (ex.: +:cadeado+).
+  #   - +classe+: classe CSS extra, além de +icone+ (opcional).
+  # Retorno:: +ActiveSupport::SafeBuffer+ com a tag +svg+.
+  # Efeitos colaterais:: levanta +KeyError+ se o ícone não existe.
   def icone(nome, classe: nil)
     tag.svg(
       ICONES.fetch(nome).html_safe,
@@ -45,37 +54,85 @@ module ApplicationHelper
     )
   end
 
+  # Formata um valor em reais (ver ValorMonetario.formatar).
+  #
+  # Argumentos::
+  #   - +valor+: número a formatar.
+  # Retorno:: +String+ como <tt>"R$ 20,00"</tt>.
+  # Efeitos colaterais:: nenhum.
   def reais(valor)
     ValorMonetario.formatar(valor)
   end
 
-  # Valor com sinal, como no extrato: "+R$ 20,00" para entradas e "-R$ 4,50" para saídas.
+  # Formata um valor em reais com sinal, como no extrato.
+  #
+  # Argumentos::
+  #   - +valor+: número a formatar, positivo para entradas e negativo para saídas.
+  # Retorno::
+  #   +String+ como <tt>"+R$ 20,00"</tt> para entradas, <tt>"-R$ 4,50"</tt> para saídas ou
+  #   <tt>"R$ 0,00"</tt> para zero.
+  # Efeitos colaterais:: nenhum.
   def reais_com_sinal(valor)
     sinal = if valor.positive? then "+" elsif valor.negative? then "-" end
     "#{sinal}#{reais(valor.abs)}"
   end
 
+  # Formata data e hora no fuso do sistema.
+  #
+  # Argumentos::
+  #   - +tempo+: data e hora a formatar.
+  # Retorno:: +String+ no formato <tt>"DD/MM/AAAA HH:MM"</tt>.
+  # Efeitos colaterais:: nenhum.
   def data_e_hora(tempo)
     tempo.in_time_zone.strftime("%d/%m/%Y %H:%M")
   end
 
+  # Nome do papel do funcionário, mostrado nas listas e no cabeçalho da Aplicação de Controle.
+  #
+  # Argumentos::
+  #   - +funcionario+: Funcionario a descrever.
+  # Retorno:: <tt>"Administrador"</tt> ou <tt>"Funcionário"</tt>.
+  # Efeitos colaterais:: nenhum.
   def papel_do_funcionario(funcionario)
     funcionario.administrador? ? "Administrador" : "Funcionário"
   end
 
+  # Iniciais do primeiro e do último nome, mostradas no avatar do usuário.
+  #
+  # Argumentos::
+  #   - +nome+: nome completo.
+  # Retorno::
+  #   +String+ em maiúsculas, como <tt>"MS"</tt> para <tt>"Maria da Silva"</tt> ou <tt>"M"</tt> para
+  #   <tt>"Maria"</tt>.
+  # Efeitos colaterais:: nenhum.
   def iniciais(nome)
     partes = nome.split
     [ partes.first, (partes.last if partes.size > 1) ].compact.map { |parte| parte[0] }.join.upcase
   end
 
-  # Marca a aba da página atual e também das páginas abaixo dela (ex.: /recarga e /recarga/pix/1).
-  # Com `exata: true`, só a própria página (ex.: Início em /controle não fica ativa em /controle/restaurantes).
+  # Link de uma aba de navegação, marcado como ativo na página atual e também nas páginas abaixo dela
+  # (ex.: /recarga e /recarga/pix/1).
+  #
+  # Argumentos::
+  #   - +texto+: texto da aba.
+  #   - +caminho+: caminho da página da aba.
+  #   - +exata+: se +true+, só marca a aba na própria página (ex.: Início em /controle não fica ativa em
+  #     /controle/restaurantes). Padrão: +false+.
+  # Retorno:: +ActiveSupport::SafeBuffer+ com a tag +a+; a aba ativa recebe a classe +abas__item--ativa+.
+  # Efeitos colaterais:: nenhum.
   def link_de_aba(texto, caminho, exata: false)
     ativa = request.path == caminho || (!exata && request.path.start_with?("#{caminho}/"))
     link_to texto, caminho, class: [ "abas__item", ("abas__item--ativa" if ativa) ],
                             aria: { current: ("page" if ativa) }
   end
 
+  # Desenha o QR Code de um texto em SVG.
+  #
+  # Argumentos::
+  #   - +conteudo+: texto codificado no QR Code (ex.: o código "Pix copia e cola").
+  #   - +rotulo+: descrição da imagem para leitores de tela.
+  # Retorno:: +ActiveSupport::SafeBuffer+ com a tag +svg+.
+  # Efeitos colaterais:: nenhum.
   def qrcode_svg(conteudo, rotulo:)
     RQRCode::QRCode.new(conteudo).as_svg(
       module_size: 5, offset: 0, use_path: true, viewbox: true, standalone: true,
@@ -83,6 +140,12 @@ module ApplicationHelper
     ).html_safe
   end
 
+  # Formata uma duração em minutos e segundos, para o contador do código PIX.
+  #
+  # Argumentos::
+  #   - +segundos+: duração em segundos.
+  # Retorno:: +String+ no formato M:SS (ex.: <tt>"0:45"</tt> para 45 segundos).
+  # Efeitos colaterais:: nenhum.
   def tempo_restante(segundos)
     format("%d:%02d", segundos / 60, segundos % 60)
   end

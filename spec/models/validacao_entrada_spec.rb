@@ -41,6 +41,30 @@ RSpec.describe ValidacaoEntrada, type: :model do
     end
   end
 
+  it "devolve true quando libera e false quando recusa" do
+    expect(described_class.new(catraca:, identificacao: "231012345", agora: almoco).processar).to be(true)
+    expect(described_class.new(catraca:, identificacao: "231012345", agora: almoco).processar).to be(false)
+  end
+
+  it "confere o saldo atual no banco, e não o que estava carregado na memória" do
+    desatualizado = Estudante.find(estudante.id)
+    estudante.update!(saldo: 0)
+    allow(Estudante).to receive(:find_by).with(matricula: "231012345").and_return(desatualizado)
+
+    validacao = validar("231012345")
+
+    expect(validacao.mensagem).to eq("Saldo insuficiente")
+    expect(estudante.reload.saldo).to eq(0)
+    expect(catraca.acessos).to be_empty
+  end
+
+  it "não desconta o saldo se o acesso não puder ser registrado" do
+    allow(catraca.acessos).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+
+    expect { validar("231012345") }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(estudante.reload.saldo).to eq(4.50)
+  end
+
   it "recusa a entrada fora do horário" do
     validacao = validar("231012345", agora: Time.zone.local(2026, 10, 16, 22))
 

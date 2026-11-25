@@ -1,0 +1,28 @@
+<%= render "cabecalho", titulo: "Novo funcionário",
+                        subtitulo: "Cadastre um funcionário do RU e escolha se ele também será administrador." %>
+
+<div class="grade-cadastro">
+  <section class="cartao" aria-labelledby="titulo-formulario">
+    <header class="cartao__cabecalho">
+      <h2 class="cartao__titulo" id="titulo-formulario">Dados do funcionário</h2>
+      <span class="selo">Todos os campos são obrigatórios</span>
+    </header>
+
+    <%= render "formulario", cadastro: @cadastro, url: controle_funcionarios_path, method: :post,
+                             botao: "Cadastrar funcionário" %>
+  </section>
+
+  <aside class="coluna-lateral">
+    <section class="cartao" aria-labelledby="titulo-regras">
+      <h2 class="cartao__titulo" id="titulo-regras">Regras do cadastro</h2>
+      <ul class="lista-regras">
+        <li><%= icone :confirmar %> SIAPE com exatamente <%= Funcionario::TAMANHO_DO_SIAPE %> dígitos numéricos</li>
+        <li><%= icone :confirmar %> Cada SIAPE e cada e-mail podem ser cadastrados uma única vez</li>
+        <li><%= icone :confirmar %> Nome, e-mail e senha são obrigatórios</li>
+        <li><%= icone :confirmar %> Senha com no mínimo <%= Usuario::TAMANHO_MINIMO_SENHA %> caracteres, igual à confirmação</li>
+      </ul>
+    </section>
+
+    <%= render "perfis" %>
+  </aside>
+</div>

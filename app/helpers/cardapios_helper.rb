@@ -1,5 +1,6 @@
+# Apoio às views do cardápio.
 module CardapiosHelper
-  # Variante do prato e o nome mostrado na tela, na ordem de exibição.
+  # Nome de cada variante do prato principal, na ordem em que aparecem no cardápio.
   OPCOES = {
     padrao: "Padrão",
     ovolactovegetariano: "Ovolactovegetariano",

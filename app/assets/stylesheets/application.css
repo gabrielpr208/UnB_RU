@@ -1272,3 +1272,15 @@ fieldset.segmentos {
   background: var(--cor-erro-clara);
   color: var(--cor-erro);
 }
+
+/* ---------- Cadastro de funcionário ---------- */
+
+/* Escolha do perfil (Funcionário ou Administrador): os segmentos ficam do tamanho das opções, não da linha. */
+.campo > .segmentos {
+  justify-self: start;
+}
+
+/* E-mails longos quebram na lista de funcionários, em vez de alargar a tabela no celular. */
+.tabela__quebravel {
+  overflow-wrap: anywhere;
+}
