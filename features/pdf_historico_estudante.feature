@@ -31,7 +31,7 @@ Funcionalidade: Exportar PDF do histórico do estudante
       | refeição | -4,50 | 10/10/2026 12:00 |
       | recarga  | 20,00 | 10/10/2026 11:30 |
 
-  Cenário: Exportar extrato vazio próprio (feliz)
+  Cenário: Exportar extrato vazio próprio (triste)
     Dado que estou logado como Maria
     Quando exporto meu extrato
     Então eu devo ver a mensagem "Sem movimentações por enquanto"

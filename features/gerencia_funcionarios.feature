@@ -1,4 +1,5 @@
 # language: pt
+@issue-4
 Funcionalidade: Gerenciar funcionários
   Como administrador
   Eu quero editar e remover funcionários
