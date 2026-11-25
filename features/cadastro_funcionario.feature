@@ -1,4 +1,5 @@
 # language: pt
+@issue-4
 Funcionalidade: Cadastro de funcionário
   Como administrador
   Eu quero cadastrar funcionários e escolher se cada um será administrador
