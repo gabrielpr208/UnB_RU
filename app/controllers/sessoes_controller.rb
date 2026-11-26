@@ -26,12 +26,9 @@ class SessoesController < ApplicationController
     estudante = Estudante.autenticar(matricula: credenciais[:matricula], senha: credenciais[:senha])
 
     if estudante
-      iniciar_sessao_para(estudante.usuario)
-      redirect_to destino_apos_login, notice: "Login realizado com sucesso"
+      concluir_login(estudante.usuario)
     else
-      @matricula = credenciais[:matricula]
-      flash.now[:alert] = MENSAGEM_DE_ERRO_NO_LOGIN
-      render :new, status: :unprocessable_content
+      recusar_login
     end
   end
 
@@ -46,6 +43,19 @@ class SessoesController < ApplicationController
   end
 
   private
+
+  # Recusa o login com uma mensagem genérica, que não diz se o erro foi na matrícula ou na senha.
+  #
+  # Argumentos:: nenhum.
+  # Retorno:: nenhum.
+  # Efeitos colaterais::
+  #   guarda a matrícula digitada em <tt>@matricula</tt> para o formulário mostrá-la de novo, define o alerta
+  #   +MENSAGEM_DE_ERRO_NO_LOGIN+ e renderiza o formulário (status 422).
+  def recusar_login
+    @matricula = credenciais[:matricula]
+    flash.now[:alert] = MENSAGEM_DE_ERRO_NO_LOGIN
+    render :new, status: :unprocessable_content
+  end
 
   # Dados permitidos do formulário de login.
   #

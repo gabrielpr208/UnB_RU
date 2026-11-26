@@ -28,12 +28,9 @@ module Controle
       funcionario = Funcionario.autenticar(siape: credenciais[:siape], senha: credenciais[:senha])
 
       if funcionario
-        iniciar_sessao_para(funcionario.usuario)
-        redirect_to destino_apos_login, notice: "Login realizado com sucesso"
+        concluir_login(funcionario.usuario)
       else
-        @siape = credenciais[:siape]
-        flash.now[:alert] = MENSAGEM_DE_ERRO_NO_LOGIN
-        render :new, status: :unprocessable_content
+        recusar_login
       end
     end
 
@@ -59,6 +56,19 @@ module Controle
     # Efeitos colaterais:: preenche +encerrado_em+ do ponto em aberto no banco.
     def liberar_catraca
       retomar_sessao&.usuario&.funcionario&.encerrar_ponto_acesso
+    end
+
+    # Recusa o login com uma mensagem genérica, que não diz se o erro foi no SIAPE ou na senha.
+    #
+    # Argumentos:: nenhum.
+    # Retorno:: nenhum.
+    # Efeitos colaterais::
+    #   guarda o SIAPE digitado em <tt>@siape</tt> para o formulário mostrá-lo de novo, define o alerta
+    #   +MENSAGEM_DE_ERRO_NO_LOGIN+ e renderiza o formulário (status 422).
+    def recusar_login
+      @siape = credenciais[:siape]
+      flash.now[:alert] = MENSAGEM_DE_ERRO_NO_LOGIN
+      render :new, status: :unprocessable_content
     end
 
     # Dados permitidos do formulário de login.
