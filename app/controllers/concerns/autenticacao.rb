@@ -193,6 +193,20 @@ module Autenticacao
     end
   end
 
+  # Conclui um login bem-sucedido: abre a sessão e leva o usuário para onde ele queria ir. Usado pelo login
+  # do estudante e pelo de funcionário.
+  #
+  # Argumentos::
+  #   - +usuario+: Usuario que acabou de se autenticar.
+  # Retorno:: nenhum.
+  # Efeitos colaterais::
+  #   abre a sessão (ver #iniciar_sessao_para) e redireciona para a página que o usuário tentou abrir antes
+  #   do login (ou a inicial) com o aviso "Login realizado com sucesso".
+  def concluir_login(usuario)
+    iniciar_sessao_para(usuario)
+    redirect_to destino_apos_login, notice: "Login realizado com sucesso"
+  end
+
   # Faz o logout do usuário.
   #
   # Argumentos:: nenhum.
