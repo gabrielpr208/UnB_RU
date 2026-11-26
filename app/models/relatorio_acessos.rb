@@ -91,13 +91,9 @@ class RelatorioAcessos
   # Efeitos colaterais:: nenhum (apenas consulta o banco).
   def totais
     case agrupar
-    when "restaurante"
-      filtrados.group("restaurantes.nome").order("restaurantes.nome").count.to_a
-    when "catraca"
-      filtrados.group("restaurantes.nome", "catracas.identificador").order("restaurantes.nome", "catracas.identificador")
-               .count.map { |(nome, identificador), total| [ "#{nome} - #{identificador}", total ] }
-    else
-      []
+    when "restaurante" then contar_por("restaurantes.nome").to_a
+    when "catraca" then totais_por_catraca
+    else []
     end
   end
 
@@ -115,6 +111,31 @@ class RelatorioAcessos
   end
 
   private
+
+  # Quantidade de acessos filtrados em cada catraca, identificada junto com o restaurante.
+  #
+  # Argumentos:: nenhum.
+  # Retorno::
+  #   +Array+ de pares <tt>[grupo, total]</tt> ordenados por restaurante e catraca, ex.:
+  #   <tt>[["RU Darcy Ribeiro - 01", 2], ["RU Darcy Ribeiro - 02", 1]]</tt>.
+  # Efeitos colaterais:: nenhum (apenas consulta o banco).
+  def totais_por_catraca
+    contar_por("restaurantes.nome", "catracas.identificador").map do |(nome, identificador), total|
+      [ "#{nome} - #{identificador}", total ]
+    end
+  end
+
+  # Conta os acessos filtrados agrupando pelas colunas pedidas, em ordem crescente dessas colunas.
+  #
+  # Argumentos::
+  #   - +colunas+: nomes das colunas do agrupamento, ex.: <tt>"restaurantes.nome"</tt>.
+  # Retorno::
+  #   +Hash+ do grupo para o total. Com uma coluna, a chave é o valor dela; com mais de uma, é um +Array+ com
+  #   os valores na mesma ordem.
+  # Efeitos colaterais:: nenhum (apenas consulta o banco).
+  def contar_por(*colunas)
+    filtrados.group(*colunas).order(*colunas).count
+  end
 
   # Consulta dos acessos com os filtros de restaurante e catraca. Um restaurante inexistente não traz acesso
   # nenhum.
